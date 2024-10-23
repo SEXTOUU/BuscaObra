@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitura de Texto por Voz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .text-area {
+            margin-top: 20px;
+            font-size: 20px;
+            color: blue;
+            border: 1px solid #ccc;
+            padding: 20px;
+            cursor: pointer;
+            width: 60%;
+            margin: 0 auto;
+            transition: background-color 0.3s;
+        }
+
+        .text-area:hover {
+            background-color: #f0f0f0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Leitura de Texto ao Clicar</h1>
+
+    <div id="text1" class="text-area">Este é o primeiro texto a ser lido.</div>
+    <div id="text2" class="text-area">Aqui está o segundo texto, clique para ouvir.</div>
+
+    <script>
+        // Função que faz a leitura do texto
+        function lerTexto(texto) {
+            const synth = window.speechSynthesis;
+            const utterThis = new SpeechSynthesisUtterance(texto);
+            utterThis.lang = 'pt-BR';
+            synth.speak(utterThis);
+        }
+
+        // Seleciona as áreas de texto
+        const text1 = document.getElementById('text1');
+        const text2 = document.getElementById('text2');
+
+        // Adiciona evento de clique para ler o texto
+        text1.addEventListener('click', () => {
+            lerTexto(text1.textContent);
+        });
+
+        text2.addEventListener('click', () => {
+            lerTexto(text2.textContent);
+        });
+    </script>
+
+</body>
+</html>
