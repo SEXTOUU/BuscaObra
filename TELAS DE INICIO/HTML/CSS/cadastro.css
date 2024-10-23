@@ -1,0 +1,275 @@
+body {
+  background-color: #1a1a1a; /* Fundo escuro */
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  animation: backgroundPulse 8s infinite alternate;
+}
+
+.container {
+  max-width: 600px;
+  margin: 100px auto;
+  padding: 30px;
+  background: linear-gradient(135deg, #333333, #444444); /* Gradiente escuro */
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+  animation: fadeIn 1s ease;
+  position: relative;
+}
+
+
+/* Estilos para o cabeçalho */
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #FFD700; /* Amarelo */
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  animation: textGlow 1.5s infinite alternate;
+}
+
+/* Grupo de formulário */
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+/* Estilo para inputs e select */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  width: 100%;
+  border: 2px solid #FFD700; /* Amarelo */
+  border-radius: 5px;
+  padding: 10px;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  font-size: 1rem;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus {
+  border-color: #ffc107; /* Amarelo mais claro */
+  outline: none;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); /* Sombra suave */
+  transform: scale(1.02);
+}
+
+/* Estilo do botão */
+.btn-primary {
+  background-color: #FFD700; /* Amarelo */
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 12px 20px;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary:hover {
+  background-color: #ffc107; /* Amarelo mais claro */
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Mensagens de feedback */
+.feedback {
+  margin-top: 15px;
+  color: #28a745; /* Verde */
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* Rodapé */
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.9rem;
+  color: #6c757d; /* Cinza */
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+@keyframes textGlow {
+  0% {
+      text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px #FFD700;
+  }
+  100% {
+      text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #FFD700;
+  }
+}
+
+@keyframes backgroundPulse {
+  0% {
+      background-color: #f8f9fa;
+  }
+  100% {
+      background-color: #e0e7ff; /* Azul claro */
+  }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .container {
+      padding: 15px;
+  }
+
+  h2 {
+      font-size: 2rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  select {
+      font-size: 1rem;
+      padding: 8px;
+  }
+
+  .btn-primary {
+      font-size: 1rem;
+      padding: 10px;
+  }
+
+  .footer {
+      font-size: 0.8rem;
+  }
+}
+
+/* Ajustes para dispositivos móveis */
+@media (max-width: 480px) {
+  h2 {
+      font-size: 1.5rem;
+  }
+
+  .btn-primary {
+      font-size: 0.9rem;
+  }
+}
+
+/* Estilo para campos de texto */
+input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* Estilos adicionais */
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.required {
+  color: red; /* Vermelho para campos obrigatórios */
+}
+
+.success-message {
+  color: #28a745; /* Verde */
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.error-message {
+  color: #dc3545; /* Vermelho */
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+/* Estilo para animações de transição de elementos */
+.transition-effect {
+  transition: all 0.5s ease;
+}
+
+/* Efeito de hover em labels */
+.form-group:hover label {
+  color: #FFD700; /* Amarelo */
+}
+
+/* Estilo para ícones */
+.icon {
+  font-size: 20px;
+  margin-right: 10px;
+  color: #FFD700; /* Amarelo */
+}
+
+/* Fundo de animação */
+.bouncing-bg {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  background-color: rgba(255, 215, 0, 0.2); /* Amarelo claro */
+  border-radius: 50%;
+  animation: bounce 5s infinite;
+  z-index: -1;
+}
+
+@keyframes bounce {
+  0% {
+      transform: translate(0, 0);
+  }
+  50% {
+      transform: translate(-20px, -20px);
+  }
+  100% {
+      transform: translate(0, 0);
+  }
+}
+
+/* Estilo do botão secundário */
+.btn-secondary {
+  background-color: #6c757d; /* Cinza */
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268; /* Cinza mais escuro */
+}
+
+/* Estilo de animação de carregamento */
+.loader {
+  border: 6px solid #000000; /* Cor de fundo */
+  border-top: 6px solid #FFD700; /* Cor do topo */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
