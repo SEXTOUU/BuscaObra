@@ -1,34 +1,65 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - BuscaObra</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="CSS/index.css">
-  <link rel="shortcut icon" href="IMAGENS/favicon.ico" type="image/x-icon">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUSCA OBRA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="IMAGENS/favicon.ico" type="image/x-icon">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1 class="text-center" id="titulo">Bem-vindo ao Sistema</h1>
-    <img src="IMAGENS/logo2.png" class="img-fluid mb-4" alt="Imagem de Boas-Vindas">
+    <!-- Cabeçalho e Navegação -->
+    <header>
+        <nav class="container">
+            <!-- Logo -->
+            <div class="logo-box">
+                <a href="#" target="_blank">
+                    <img src="/img/WhatsApp Image 2024-10-30 at 14.30.52.jpeg" class="logo" alt="BuscaObra">
+                </a>
+            </div>
+            <!-- Links de Navegação -->
+            <div class="parent-link">
+                <a href="#" class="social-links">CONTATO</a>
+                <a href="#" class="social-links">SOBRE</a>
+                <a href="#" class="social-links">XXXXX</a>
+                <a href="#" class="social-links">XXXXX</a>
+                <a href="login.php" class="social-links">LOGINs</a>
+            </div>
+            <!-- Ícones de Redes Sociais -->
+            <div class="icon">
+                <a href="https://l.instagram.com/" target="_blank" class="sm-icon">
+                    <ion-icon name="logo-instagram"></ion-icon>
+                </a>
+                <a href="https://facebook.com" target="_blank" class="sm-icon">
+                    <ion-icon name="logo-facebook"></ion-icon>
+                </a>
+                <a href="https://github.com" target="_blank" class="sm-icon">
+                    <ion-icon name="logo-github"></ion-icon>
+                </a>
+                <a href="www.tiktok.com" target="_blank" class="sm-icon">
+                    <ion-icon name="logo-tiktok"></ion-icon>
+                </a>
+                <a href="https://www.youtube.com/" target="_blank" class="sm-icon">
+                    <ion-icon name="logo-youtube"></ion-icon>
+                </a>
+            </div>
+        </nav>
 
-    <form id="login-form">
-      <div class="form-group">
-        <input type="text" id="usuario" class="form-control" placeholder="Usuário" required>
-      </div>
-      <div class="form-group">
-        <input type="password" id="senha" class="form-control" placeholder="Senha" required>
-      </div>
-      <button type="submit" class="btn btn-success btn-block" id="btn-login">Login</button>
-    </form>
-
-    <p class="t">Não tem uma conta? <a href="cadastro.html" id="link-cadastro">Cadastre-se</a></p>
-    <div class="feedback" id="feedback-login"></div>
-  </div>
-  <script src="JS/index.js"></script>
+        <!-- Texto do Cabeçalho -->
+        <div class="header-container">
+            <div class="hdr-container-inner">
+                <h1>Bem Vindo Ao nosso site BuscaObra</h1>
+                <p>
+                    Conecte-se com os melhores profissionais de construção e manutenção, facilitando sua busca por pedreiros, eletricistas, encanadores e muito mais. 
+                </p>
+                <div class="button-group">
+                    <a href="#" class="btn">Buscar Profissionais</a>
+                    <a href="usuario.php" class="btn">Fazer Cadastro</a>
+                </div>
+            </div>
+        </div>
+    </header>
 </body>
 </html>

@@ -1,24 +1,7 @@
 const tipoUsuarioSelect = document.getElementById('tipo-usuario');
 const informacoesAdicionaisDiv = document.getElementById('informacoes-adicionais');
 const formCadastro = document.getElementById('form-cadastro'); // Referência ao formulário
-
-// Adiciona um listener para o formulário
-formCadastro.addEventListener('submit', function (event) {
-  event.preventDefault(); // Impede o envio do formulário padrão
-
-  const tipoUsuario = tipoUsuarioSelect.value; // Obtém o valor selecionado
-
-  if (tipoUsuario === 'administrador') {
-    window.location.href = 'administrador.html'; // Redireciona para a página do administrador
-  } else if (tipoUsuario === 'funcionario') {
-    window.location.href = 'funcionario.html'; // Redireciona para a página do funcionário
-  } else if (tipoUsuario === 'usuario') {
-    window.location.href = 'usuario.html'; // Redireciona para a página do usuário
-  } else {
-    alert('Selecione um tipo de usuário para continuar.');
-  }
-});
-
+const feedback = document.getElementById('feedback'); // Referência ao feedback
 
 // Função para ler texto por voz
 function lerTexto(texto) {
@@ -28,12 +11,39 @@ function lerTexto(texto) {
   synth.speak(utterThis);
 }
 
+// Adiciona um listener para o formulário
+formCadastro.addEventListener('submit', function (event) {
+  event.preventDefault(); // Impede o envio do formulário padrão
+
+  const tipoUsuario = tipoUsuarioSelect.value; // Obtém o valor selecionado
+
+  if (tipoUsuario === '') {
+    feedback.textContent = "Por favor, selecione o tipo de usuário.";
+    lerTexto(feedback.textContent);
+  } else {
+    feedback.textContent = `Usuário do tipo ${tipoUsuario} cadastrado com sucesso!`;
+    lerTexto(feedback.textContent);
+    
+    // Exibir mensagem de "Cadastro em andamento" e redirecionar após um atraso
+    lerTexto('Cadastro em andamento. Por favor, aguarde.');
+    setTimeout(() => {
+      // Redireciona para a página correspondente
+      if (tipoUsuario === 'administrador') {
+        window.location.href = 'administrador.html'; // Redireciona para a página do administrador
+      } else if (tipoUsuario === 'funcionario') {
+        window.location.href = 'funcionario.html'; // Redireciona para a página do funcionário
+      } else if (tipoUsuario === 'usuario') {
+        window.location.href = 'usuario.html'; // Redireciona para a página do usuário
+      }
+    }, 3000); // Atraso de 3 segundos (3000 milissegundos)
+  }
+});
+
 // Elementos que terão leitura por voz
 const imagemCadastro = document.getElementById('imagem-cadastro');
 const tituloCadastro = document.getElementById('titulo-cadastro');
 const tipoUsuario = document.getElementById('tipo-usuario');
 const btnCadastrar = document.getElementById('btn-cadastrar');
-const feedback = document.getElementById('feedback');
 
 // Leitura ao clicar na imagem
 imagemCadastro.addEventListener('click', () => lerTexto('Imagem de cadastro.'));
@@ -54,16 +64,4 @@ tipoUsuario.addEventListener('change', () => {
 btnCadastrar.addEventListener('click', (e) => {
   e.preventDefault(); // Impede o envio imediato para que a mensagem seja ouvida
   lerTexto('Cadastro em andamento. Por favor, aguarde.');
-});
-
-// Exemplo de feedback após tentativa de cadastro
-document.getElementById('form-cadastro').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const tipoSelecionado = tipoUsuario.value;
-  if (tipoSelecionado === "") {
-    feedback.textContent = "Por favor, selecione o tipo de usuário.";
-  } else {
-    feedback.textContent = `Usuário do tipo ${tipoSelecionado} cadastrado com sucesso!`;
-  }
-  lerTexto(feedback.textContent);
 });
