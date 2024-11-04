@@ -1,0 +1,261 @@
+body {
+  background-color: #1a1a1a; /* Fundo escuro */
+  font-family: "Lilita One", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  animation: backgroundPulse 8s infinite alternate;
+}
+.t{
+  color: #f3f3f3;
+  text-align: center;
+}
+.container {
+  max-width: 600px;
+  margin: 100px auto;
+  padding: 30px;
+  background: linear-gradient(135deg, #333333, #444444); /* Gradiente escuro */
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+  animation: fadeIn 1s ease;
+  position: relative;
+}
+
+/* Estilos para o cabeçalho */
+h1 {
+  text-align: center;
+  color: #ffcc00; /* Amarelo brilhante */
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  animation: textGlow 1.5s infinite alternate;
+}
+
+/* Estilos para o grupo de formulário */
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+/* Estilo para inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  border: 2px solid #ffcc00; /* Amarelo brilhante */
+  border-radius: 10px;
+  padding: 12px;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  font-size: 1rem;
+  background-color: #222; /* Fundo escuro para inputs */
+  color: #ffffff; /* Texto branco */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: #ffdb4d; /* Amarelo mais claro */
+  outline: none;
+  box-shadow: 0 0 12px rgba(95, 93, 87, 0.7); /* Sombra suave */
+  transform: scale(1.02); /* Efeito de zoom */
+}
+
+/* Estilo do botão de login */
+.btn-login {
+  background-color: #ffcc00; /* Amarelo brilhante */
+  color: black; /* Texto preto */
+  border: none;
+  padding: 12px 20px;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.btn-login:hover {
+  background-color: #ffdb4d; /* Amarelo mais claro */
+  transform: translateY(-3px) scale(1.05); /* Efeito de levitar */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.btn-login:active {
+  transform: translateY(0); /* Efeito de clique */
+}
+
+/* Mensagens de feedback */
+.feedback {
+  margin-top: 15px;
+  color: #ffcc00; /* Amarelo brilhante */
+  text-align: center;
+}
+
+/* Rodapé */
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.9rem;
+  color: #aaa; /* Cinza claro */
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+@keyframes textGlow {
+  0% {
+      text-shadow: 0 0 5px #ffcc00, 0 0 10px #ffcc00, 0 0 15px #ffcc00;
+  }
+  100% {
+      text-shadow: 0 0 10px #686555, 0 0 20px #6e6c5f, 0 0 30px #706d60;
+  }
+}
+
+@keyframes backgroundPulse {
+  0% {
+      background-color: #1a1a1a;
+  }
+  100% {
+      background-color: #2a2a2a; /* Azul escuro */
+  }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .container {
+      padding: 20px;
+  }
+
+  h1 {
+      font-size: 2rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+      padding: 10px;
+  }
+
+  .btn-login {
+      font-size: 1rem;
+      padding: 10px;
+  }
+
+  .footer {
+      font-size: 0.8rem;
+  }
+}
+
+/* Adicionando mais estilos */
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #ffffff; /* Texto branco */
+  font-weight: bold;
+}
+
+.required {
+  color: red;
+}
+
+.success-message {
+  color: #ffcc00; /* Amarelo brilhante */
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.error-message {
+  color: #ff4c4c; /* Vermelho */
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+/* Estilo para campos de texto */
+input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* Efeito de animação de carregamento */
+.loader {
+  border: 6px solid #f3f3f3; /* Cor de fundo */
+  border-top: 6px solid #ffcc00; /* Cor do topo */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Estilo de animação de entrada para elementos */
+.element {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.5s forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Estilo de fundo animado */
+.bouncing-bg {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  background-color: rgba(255, 204, 0, 0.2); /* Amarelo claro */
+  border-radius: 50%;
+  animation: bounce 5s infinite;
+  z-index: -1;
+}
+
+@keyframes bounce {
+  0% {
+      transform: translate(0, 0);
+  }
+  50% {
+      transform: translate(-20px, -20px);
+  }
+  100% {
+      transform: translate(0, 0);
+  }
+}
+
+/* Efeito de brilho no botão ao passar o mouse */
+.btn-login:hover {
+  box-shadow: 0 0 15px rgba(255, 205, 0, 0.6);
+}
+
+/* Efeito de mudança de cor suave para o botão ao passar o mouse */
+.btn-login {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Mudanças de cor e escala para o botão ao ser clicado */
+.btn-login:active {
+  background-color: #ffdb4d; /* Amarelo mais claro */
+  transform: scale(0.95);
+}

@@ -10,7 +10,6 @@ if (isset($_POST['login'])) {
   if (empty($usuario) || empty($senha)) {
     echo "<script>alert('Por favor, preencha todos os campos!')</script>";
   } else {
-
     $pdo = getDatabaseConnection();
     $stmt = $pdo->prepare("SELECT * FROM cliente WHERE cli_nome = :usuario");
     $stmt->bindParam(':usuario', $usuario);
@@ -24,8 +23,10 @@ if (isset($_POST['login'])) {
       if (password_verify($senha, $user['cli_senha'])) {
         session_start();
         $_SESSION['usuario'] = $usuario;
+        $_SESSION['cli_tipo'] = $user['cli_tipo'];
+        $_SESSION['logged_in'] = true;
         redirect("index.php");
-        exit(); // Certifique-se de usar exit após header para interromper a execução
+        exit();
       } else {
         echo "<script>alert('Credenciais inválidas')</script>";
       }
@@ -40,10 +41,10 @@ if (isset($_POST['login'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - BuscaObra</title>
+  <title><?php echo $titulo; ?> - Tela de Login</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="CSS/index.css">
-  <link rel="shortcut icon" href="IMAGENS/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
@@ -51,7 +52,7 @@ if (isset($_POST['login'])) {
 <body>
   <div class="container">
     <h1 class="text-center" id="titulo">Bem-vindo ao Sistema</h1>
-    <img src="IMAGENS/logo2.png" class="img-fluid mb-4" alt="Imagem de Boas-Vindas">
+    <img src="images/logo.jpeg" class="img-fluid mb-4" alt="Imagem de Boas-Vindas">
 
     <form id="login-form" method="POST">
       <div class="form-group">
@@ -66,6 +67,6 @@ if (isset($_POST['login'])) {
     <p class="t">Não tem uma conta? <a href="cadastro.html" id="link-cadastro">Cadastre-se</a></p>
     <div class="feedback" id="feedback-login"></div>
   </div>
-  <script src="JS/index.js"></script>
+  <script src="js/login.js"></script>
 </body>
 </html>

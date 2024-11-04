@@ -3,23 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro - BuscaObra</title>
+  <title>BuscaObra - Tela para o Cadastro</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="CSS/cadastro.css">
-  <link rel="shortcut icon" href="IMAGENS/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/cadastro.css">
+  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 <body>
   <div class="container">
-    <img src="IMAGENS/jovem-artesao-construindo-uma-casa_1303-27969.avif" 
+    <img src="images/jovem-artesao-construindo-uma-casa_1303-27969.avif" 
          class="img-fluid mb-4" alt="Imagem de Cadastro" id="imagem-cadastro">
-    <h2 id="titulo-cadastro">Cadastro de Usuário</h2>
+    <h2 id="titulo-cadastro">Tela de Seleção do Usuario</h2>
 
     <form id="form-cadastro">
       <div class="form-group">
         <select id="tipo-usuario" class="form-control" required>
           <option value="">Selecione o tipo de usuário</option>
-          <option value="administrador">Administrador</option>
-          <option value="funcionario">Funcionário</option>
+          <option value="funcionario">Profissional</option>
           <option value="usuario">Usuário</option>
         </select>
       </div>
@@ -28,6 +27,6 @@
     </form>
     <div class="feedback" id="feedback"></div>
   </div>
-  <script src="JS/cadastro.js"></script>
+  <script src="js/cadastro.js"></script>
 </body>
 </html>

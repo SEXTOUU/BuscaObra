@@ -1,11 +1,26 @@
+<?php
+
+    require_once "config.php";
+
+    session_start();
+
+    if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+        $usuario = $_SESSION['usuario'];
+        $cli_tipo = $_SESSION['cli_tipo'];
+    }
+
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUSCA OBRA</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="shortcut icon" href="IMAGENS/favicon.ico" type="image/x-icon">
+    <title><?php echo $titulo; ?></title>  
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
@@ -16,7 +31,7 @@
             <!-- Logo -->
             <div class="logo-box">
                 <a href="#" target="_blank">
-                    <img src="/img/WhatsApp Image 2024-10-30 at 14.30.52.jpeg" class="logo" alt="BuscaObra">
+                    <img src="images/logo.jpeg" class="logo" alt="BuscaObra">
                 </a>
             </div>
             <!-- Links de Navegação -->
@@ -24,10 +39,64 @@
                 <a href="#" class="social-links">CONTATO</a>
                 <a href="#" class="social-links">SOBRE</a>
                 <a href="#" class="social-links">XXXXX</a>
+                <a href="#" class="social-links">SUPORTE</a>
                 <a href="#" class="social-links">XXXXX</a>
-                <a href="login.php" class="social-links">LOGIN</a>
-                <a href="logout.php" class="social-links">LOGOUT</a>
             </div>
+                  
+            <!-- Menu de Perfil do Usuário -->
+            <?php
+            if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+                ?>
+                <div class="profile-menu">
+                    <div class="profile-icon">
+                        <img src="images/user-profile.jpeg" alt="Foto do usuário">
+                        <div class="notification-dot"></div> <!-- Indicador de notificação -->
+                    </div>
+                    <div class="profile-dropdown">
+                        <img src="images/user-profile.jpeg" alt="Foto do usuário">
+                        <p class="welcome-message">Bem-vindo(a) de volta!</p>
+                        <p>Olá, <?php echo $usuario; ?></p>
+                        <hr>    
+                        <ul>
+                            <li><a href="#"><i class="dropdown-icon bi bi-person"></i> Perfil</a></li>
+                            <li><a href="#"><i class="dropdown-icon bi bi-gear"></i> Configuração</a></li>
+                            <?php
+                            if($cli_tipo === 4){
+                                ?>
+                                <li><a href="#"><i class="dropdown-icon bi bi-columns"></i> Painel de Controle</a></li>
+                                <?php
+                            }
+                            ?>
+                            <li><a href="#"><i class="dropdown-icon bi bi-question-circle"></i> Ajuda</a></li>
+                            <hr>
+                            <li><a href="logout.php"><i class="dropdown-icon bi bi-box-arrow-right"></i> Sair</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <?php
+            } else {
+                // Exibe os botões de login e registro se o usuário não estiver logado
+                ?>
+                <div class="profile-menu">
+                    <div class="profile-icon">
+                        <img src="images/user-profile.jpeg" alt="Foto do usuário">
+                        <div class="notification-dot"></div> <!-- Indicador de notificação -->
+                    </div>
+                    <div class="profile-dropdown">
+                        <img src="images/user-profile.jpeg" alt="Foto do usuário">
+                        <p>Seja Bem Vindo, <br>faça o Login ou o Registro</p>
+                        <hr>
+                        <ul>
+                            <li><a href="login.php"><i class="dropdown-icon bi bi-box-arrow-in-right"></i> Login</a></li>
+                            <li><a href="cadastro.html"><i class="dropdown-icon bi bi-person-plus"></i> Cadastrar-se</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <?php
+            }
+            ?>
+
+
             <!-- Ícones de Redes Sociais -->
             <div class="icon">
                 <a href="https://l.instagram.com/" target="_blank" class="sm-icon">
@@ -57,10 +126,12 @@
                 </p>
                 <div class="button-group">
                     <a href="#" class="btn">Buscar Profissionais</a>
-                    <a href="usuario.php" class="btn">Fazer Cadastro</a>
+                    <a href="cadastro.html" class="btn">Fazer Cadastro</a>
                 </div>
             </div>
         </div>
     </header>
+
+    <script src="js/index.js"></script>
 </body>
 </html>

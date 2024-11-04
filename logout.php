@@ -2,7 +2,6 @@
 
 require_once "config.php";
 
-
 // Inicie a sessão
 session_start();
 

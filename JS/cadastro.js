@@ -31,9 +31,9 @@ formCadastro.addEventListener('submit', function (event) {
       if (tipoUsuario === 'administrador') {
         window.location.href = 'administrador.html'; // Redireciona para a página do administrador
       } else if (tipoUsuario === 'funcionario') {
-        window.location.href = 'funcionario.html'; // Redireciona para a página do funcionário
+        window.location.href = 'funcionario.php'; // Redireciona para a página do funcionário
       } else if (tipoUsuario === 'usuario') {
-        window.location.href = 'usuario.html'; // Redireciona para a página do usuário
+        window.location.href = 'usuario.php'; // Redireciona para a página do usuário
       }
     }, 3000); // Atraso de 3 segundos (3000 milissegundos)
   }
@@ -58,10 +58,4 @@ tipoUsuario.addEventListener('focus', () => lerTexto('Selecione o tipo de usuár
 tipoUsuario.addEventListener('change', () => {
   const opcao = tipoUsuario.options[tipoUsuario.selectedIndex].text;
   lerTexto(`Você selecionou: ${opcao}`);
-});
-
-// Leitura ao clicar no botão de cadastro
-btnCadastrar.addEventListener('click', (e) => {
-  e.preventDefault(); // Impede o envio imediato para que a mensagem seja ouvida
-  lerTexto('Cadastro em andamento. Por favor, aguarde.');
 });

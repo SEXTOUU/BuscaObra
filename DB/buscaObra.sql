@@ -1,11 +1,10 @@
 CREATE DATABASE IF NOT EXISTS buscaobra;
 USE buscaobra;
 
-DROP TABLE IF EXISTS usuario;
-DROP TABLE IF EXISTS funcionario;
+DROP TABLE IF EXISTS profissionais;
 DROP TABLE IF EXISTS admins;
 DROP TABLE IF EXISTS cliente;
-DROP TABLE IF EXISTS UserTipo;
+DROP TABLE IF EXISTS usertipo;
 
 -- Tabela Usertipo
 CREATE TABLE usertipo (
@@ -28,20 +27,14 @@ CREATE TABLE cliente (
     FOREIGN KEY (cli_tipo) REFERENCES usertipo(usertipo_id)
 );
 
--- Tabela Usuario com foreign key para Cliente
-CREATE TABLE usuario (
-    usu_id INT PRIMARY KEY AUTO_INCREMENT,
-    usu_data_naci DATE,
-    usu_telefone CHAR(14),
-    FOREIGN KEY (usu_id) REFERENCES cliente(cli_id)
-);
-
 -- Tabela Funcionario com foreign key para Cliente
-CREATE TABLE funcionario (
-    fun_id INT PRIMARY KEY AUTO_INCREMENT,
-    fun_profissao VARCHAR(50) NOT NULL,
-    fun_telefone CHAR(14),
-    FOREIGN KEY (fun_id) REFERENCES cliente(cli_id)
+CREATE TABLE profissionais (
+    pro_id INT PRIMARY KEY AUTO_INCREMENT,
+    pro_nome VARCHAR(255),
+    pro_email VARCHAR(255) UNIQUE,
+    pro_profissao VARCHAR(50) NOT NULL,
+    pro_telefone CHAR(14),
+    FOREIGN KEY (pro_id) REFERENCES cliente(cli_id)
 );
 
 -- Tabela Admins com foreign key para Cliente
@@ -52,14 +45,8 @@ CREATE TABLE admins (
     FOREIGN KEY (admin_id) REFERENCES cliente(cli_id)
 );
 
-/* Temporario: Tabela para formas de pagamento
-CREATE TABLE forma_pagamento ( 
-    fp_id INT PRIMARY KEY AUTO_INCREMENT,
-    fp_nome VARCHAR(100) NOT NULL
-);
-*/
-
 -- INSERTS
 INSERT INTO usertipo (usertipo_nome) VALUES ('usuario');
-INSERT INTO usertipo (usertipo_nome) VALUES ('funcionario');
+INSERT INTO usertipo (usertipo_nome) VALUES ('profissional');
+INSERT INTO usertipo (usertipo_nome) VALUES ('moderador');
 INSERT INTO usertipo (usertipo_nome) VALUES ('admin');

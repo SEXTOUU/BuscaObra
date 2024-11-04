@@ -13,6 +13,8 @@ if (isset($_POST['cadastrar'])) {
           echo "<script>alert('Por favor, preencha todos os campos!')</script>";
       } else if(strlen($senha) < 6) {
           echo "<script>alert('Senha muito curta!')</script>";
+      } else if(!filter_var($email , FILTER_VALIDATE_EMAIL)) {
+          echo "<script>alert('Email não é valido!')</script>";
       } else {
         // Converte a data
         $data_nascimento_formatada = DateTime::createFromFormat('d/m/Y', $data_nascimento);
@@ -60,15 +62,15 @@ if (isset($_POST['cadastrar'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Usuário</title>
+  <title><?php echo $titulo; ?> - Cadastro de Usuário</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="CSS/usuario.css">
-  <link rel="shortcut icon" href="IMAGENS/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/usuario.css">
+  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 <body>
   <div class="container">
-    <img src="IMAGENS/pessoas-em-filmagem-media-trabalhando-juntas_23-2150290079.avif" class="img-fluid mb-4" alt="Imagem de Usuário">
-    <h2>Login Usuário - BuscaObra</h2>
+    <img src="iamges/pessoas-em-filmagem-media-trabalhando-juntas_23-2150290079.avif" class="img-fluid mb-4" alt="Imagem de Usuário">
+    <h2><?php echo $titulo; ?> - Cadastror Usuário</h2>
     <form id="usuario-form" method="POST">
       <div class="form-group">
         <input type="text" id="nome-usuario" name="usuario" class="form-control" placeholder="Nome Completo" required>
@@ -86,6 +88,6 @@ if (isset($_POST['cadastrar'])) {
     </form>
     <div class="feedback" id="feedback-usuario"></div>
   </div>
-  <script src="JS/usuario.js"></script>
+  <script src="js/usuario.js"></script>
 </body>
 </html>
