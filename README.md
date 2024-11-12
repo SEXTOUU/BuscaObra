@@ -24,4 +24,7 @@ Em Breve
 
 # Funcionalidades Ate o momento
 - Login e Registro
+- Busca de Profissionais
+- Lista de Profissionais
+- Sistema de avaliação
 
