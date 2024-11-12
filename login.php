@@ -1,15 +1,17 @@
 <?php
-
 require_once "config.php";
 
+// Verifica se o formulário de login foi enviado
 if (isset($_POST['login'])) {
 
   $usuario = $_POST['usuario'];
   $senha = $_POST['senha'];
 
+  // Verifica se os campos estão preenchidos
   if (empty($usuario) || empty($senha)) {
     echo "<script>alert('Por favor, preencha todos os campos!')</script>";
   } else {
+    // Conexão com o banco de dados
     $pdo = getDatabaseConnection();
     $stmt = $pdo->prepare("SELECT * FROM cliente WHERE cli_nome = :usuario");
     $stmt->bindParam(':usuario', $usuario);
@@ -21,12 +23,16 @@ if (isset($_POST['login'])) {
 
       // Verifica a senha usando password_verify
       if (password_verify($senha, $user['cli_senha'])) {
+        // Inicia a sessão e registra as informações do usuário
         session_start();
         $_SESSION['usuario'] = $usuario;
+        $_SESSION['cli_id'] = $user['cli_id']; // Armazena o ID do cliente
         $_SESSION['cli_tipo'] = $user['cli_tipo'];
-        $_SESSION['logged_in'] = true;
-        redirect("index.php");
-        exit();
+        $_SESSION['logged_in'] = true; // Marca o usuário como logado
+
+        // Redireciona para a página principal (ou página de origem)
+        header("Location: index.php");
+        exit(); // Garante que o script pare após o redirecionamento
       } else {
         echo "<script>alert('Credenciais inválidas')</script>";
       }
@@ -36,6 +42,7 @@ if (isset($_POST['login'])) {
   }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

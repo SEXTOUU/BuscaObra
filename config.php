@@ -1,13 +1,16 @@
 <?php
-// config.php
+
+// Configurações do banco de dados
 $host = 'localhost';
 $dbname = 'buscaobra';
 $user = 'root';
 $pass = '';
 
-// function.php
-require_once 'function.php';
+// Inclui o arquivo de funções
+require_once "function.php";
 
-// Configurações Geral da Página
+// Configurações gerais da página
 $titulo = 'BuscaObra';
+
+
 ?>
