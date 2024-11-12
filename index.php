@@ -19,10 +19,17 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $titulo; ?></title>
+
+    <meta name="description" content="<?php echo $descricao; ?>">
+    <meta name="keywords" content="<?php echo $meta; ?>">
+
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+
     <link rel="stylesheet" href="css/index.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css">
+    
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
@@ -62,7 +69,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                             <li><a href="perfil.php"><i class="dropdown-icon bi bi-person"></i> Perfil</a></li>
                             <li><a href="#"><i class="dropdown-icon bi bi-gear"></i> Configuração</a></li>
                             <?php if ($cli_tipo === 4): ?>
-                                <li><a href="#"><i class="dropdown-icon bi bi-columns"></i> Painel de Controle</a></li>
+                                <li><a href="admin/login.php"><i class="dropdown-icon bi bi-columns"></i> Painel de Controle</a></li>
                             <?php endif; ?>
                             <li><a href="#"><i class="dropdown-icon bi bi-question-circle"></i> Ajuda</a></li>
                             <hr>
@@ -119,7 +126,13 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                 </p>
                 <div class="button-group">
                     <a href="listarProfissionais.php" class="btn">Buscar Profissionais</a>
-                    <a href="cadastro.html" class="btn">Fazer Cadastro</a>
+                    <?php
+                        if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true){
+                            echo '<a href="perfil.php" class="btn">Meu Perfil</a>';
+                        } else {
+                            echo '<a href="cadastro.html" class="btn">Fazer Cadastro</a>';
+                        }
+                    ?>
                 </div>
             </div>
         </section>

@@ -107,10 +107,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p><strong>Descrição:</strong> <?php echo nl2br(htmlspecialchars($profissional['pro_descricao'])); ?></p>
                 
                 <!-- Mensagem explicativa -->
-                <p class="text-muted">Clique no botão abaixo para abrir o Gmail e enviar uma mensagem diretamente para o profissional.</p>
+                <p class="text-muted">Clique em um dos botões abaixo para entrar em contato com o profissional.</p>
                 
                 <!-- Botão Contatar com link para Gmail -->
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=<?php echo urlencode($profissional['pro_email']); ?>" target="_blank" class="btn btn-primary mt-3">Contatar via Gmail</a>
+
+                <!-- Botão Contatar com link para WhatsApp -->
+                <a href="https://api.whatsapp.com/send?phone=<?php echo urlencode($profissional['pro_telefone']); ?>" target="_blank" class="btn btn-success mt-3">Contatar via WhatsApp</a>
             </div>
         </div>
 

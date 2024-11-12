@@ -42,9 +42,11 @@ if (isset($_POST['cadastrar'])) {
                 if ($stmt->execute()) {
                     $clienteId = $pdo->lastInsertId();
 
-                    // Inserção na tabela profissionais, incluindo o campo de descrição
-                    $stmtFuncionario = $pdo->prepare("INSERT INTO profissionais (cli_id, profissao_id, pro_profissao, pro_telefone, pro_descricao) VALUES (:cli_id, (SELECT profissao_id FROM profissoes WHERE nome = :profissao), :pro_profissao, :telefone, :descricao)");
+                    // Inserção na tabela profissionais, incluindo o nome, email, profissão, telefone e descrição
+                    $stmtFuncionario = $pdo->prepare("INSERT INTO profissionais (cli_id, pro_nome, pro_email, profissao_id, pro_profissao, pro_telefone, pro_descricao) VALUES (:cli_id, :nome, :email, (SELECT profissao_id FROM profissoes WHERE nome = :profissao), :pro_profissao, :telefone, :descricao)");
                     $stmtFuncionario->bindParam(':cli_id', $clienteId);
+                    $stmtFuncionario->bindParam(':nome', $nome);
+                    $stmtFuncionario->bindParam(':email', $email);
                     $stmtFuncionario->bindParam(':profissao', $profissao);
                     $stmtFuncionario->bindParam(':pro_profissao', $profissao);
                     $stmtFuncionario->bindParam(':telefone', $telefone_limpo);
@@ -69,6 +71,7 @@ if (isset($_POST['cadastrar'])) {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

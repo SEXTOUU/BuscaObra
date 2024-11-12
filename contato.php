@@ -1,6 +1,15 @@
 <?php
 require_once "config.php";
 
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+
+    $usuario = $_SESSION['usuario'];
+    $cli_tipo = $_SESSION['cli_tipo'];
+} else {
+    $usuario = null;
+    $cliTipo = null;
+}
+
 // Conexão com o banco de dados
 $pdo = getDatabaseConnection();
 

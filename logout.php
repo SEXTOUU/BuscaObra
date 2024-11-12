@@ -1,16 +1,12 @@
 <?php
 require_once "config.php";
 
-// Inicie a sessão
 session_start();
 
-// Limpa todas as variáveis de sessão
 session_unset();
 
-// Destrói a sessão
 session_destroy();
 
-// Exclui os cookies de sessão (se existir)
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
     setcookie(session_name(), '', time() - 42000,
@@ -19,7 +15,12 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-// Redireciona para a página de login
-header("Location: login.php"); // Redirecionar para login
+unset($_SESSION['logged_in']);
+unset($_SESSION['usuario']);
+unset($_SESSION['cli_id']);
+unset($_SESSION['cli_tipo']);
+
+redirect("index.php"); 
 exit;
+
 ?>

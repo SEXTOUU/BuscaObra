@@ -11,6 +11,7 @@ require_once "function.php";
 
 // Configurações gerais da página
 $titulo = 'BuscaObra';
-
+$descricao = 'BuscaObra e uma plataforma de busca de profissionais de construção e manutenção.';
+$meta = 'buscaobra obras construção manutenção trabalhadores civis';
 
 ?>

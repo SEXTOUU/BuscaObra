@@ -17,16 +17,17 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
             // Consulta personalizada para cada tipo de cliente
             if ($cli_tipo === 'profissional') {
                 // Busca dados de profissionais (cliente e profissionais)
-                $sql = "SELECT c.cli_nome AS nome, c.cli_email AS email, c.cli_telefone AS telefone, 
-                               p.prof_descricao AS descricao, p.prof_profissao AS profissao 
-                        FROM cliente c 
-                        JOIN profissionais p ON c.cli_id = p.cli_id 
-                        WHERE c.cli_id = ?";
+                $sql = "SELECT c.cli_nome AS nome, c.cli_email AS email, p.pro_telefone AS telefone, p.pro_descricao AS descricao, pr.nome AS profissao
+                        FROM cliente c
+                        JOIN profissionais p ON c.cli_id = p.cli_id
+                        JOIN profissoes pr ON p.profissao_id = pr.profissao_id
+                        WHERE c.cli_id = ?;";
             } else {
                 // Busca dados de clientes normais
-                $sql = "SELECT cli_nome AS nome, cli_email AS email, cli_telefone AS telefone 
-                        FROM cliente 
-                        WHERE cli_id = ?";
+                $sql = "SELECT c.cli_nome AS nome, c.cli_email AS email, p.pro_telefone AS telefone 
+                        FROM cliente c
+                        JOIN profissionais p ON c.cli_id = p.cli_id
+                        WHERE c.cli_id = ?;";
             }
 
             $stmt = $pdo->prepare($sql);
@@ -34,9 +35,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
             // Captura os dados do cliente
             $dadosUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // Verifique os dados retornados
-            var_dump($dadosUsuario); // Depuração: verifique os dados retornados
 
             if ($dadosUsuario) {
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -54,15 +52,17 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     } else {
                         // Monta a atualização com base no tipo de cliente
                         if ($cli_tipo === 'profissional') {
-                            $sqlUpdate = "UPDATE cliente c 
-                                          JOIN profissionais p ON c.cli_id = p.cli_id 
-                                          SET c.cli_nome = ?, c.cli_email = ?, c.cli_telefone = ?, 
-                                              p.prof_descricao = ?, p.prof_profissao = ? 
-                                          WHERE c.cli_id = ?";
+                            $sqlUpdate = "UPDATE cliente c JOIN profissionais p ON c.cli_id = p.cli_id SET 
+                                                c.cli_nome = ?, 
+                                                c.cli_email = ?, 
+                                                p.pro_telefone = ?,           
+                                                p.pro_descricao = ?,              
+                                                p.profissao_id = ?                
+                                            WHERE c.cli_id = ?;";
                             $stmt = $pdo->prepare($sqlUpdate);
                             $stmt->execute([$novoNome, $novoEmail, $novoTelefone, $novaDescricao, $novaProfissao, $cli_id]);
                         } else {
-                            $sqlUpdate = "UPDATE cliente SET cli_nome = ?, cli_email = ?, cli_telefone = ? WHERE cli_id = ?";
+                            $sqlUpdate = "UPDATE cliente SET cli_nome = ?, cli_email = ? WHERE cli_id = ?;";
                             $stmt = $pdo->prepare($sqlUpdate);
                             $stmt->execute([$novoNome, $novoEmail, $novoTelefone, $cli_id]);
                         }

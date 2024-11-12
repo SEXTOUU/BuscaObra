@@ -1,10 +1,8 @@
 <?php
 require_once "config.php";
 
-// Inicia a sessão para verificar o estado do login
 session_start();
 
-// Verifica se o usuário está logado
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
     $usuario = $_SESSION['usuario'];
@@ -14,13 +12,10 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     exit; 
 }
 
-// Conexão com o banco de dados
 $pdo = getDatabaseConnection();
 
-// Verifica se o tipo de profissional foi selecionado
 $tipo_profissional = isset($_POST['tipo_profissional']) ? $_POST['tipo_profissional'] : '';
 
-// Monta a consulta com base no tipo de profissional selecionado, incluindo a média de avaliações
 $query = "
     SELECT p.pro_id, p.pro_nome, p.pro_email, p.pro_profissao, p.pro_telefone, p.pro_descricao, 
            IFNULL(AVG(a.nota), 0) AS media_avaliacao  -- Calcula a média das avaliações, assumindo 0 se não houver
@@ -32,11 +27,10 @@ if ($tipo_profissional) {
     $query .= " WHERE p.pro_profissao = :tipo_profissional";
 }
 
-$query .= " GROUP BY p.pro_id";  // Agrupa por profissional para calcular a média de avaliações
+$query .= " GROUP BY p.pro_id"; 
 
 $stmt = $pdo->prepare($query);
 
-// Se houver filtro de profissão, bind do parâmetro
 if ($tipo_profissional) {
     $stmt->bindParam(':tipo_profissional', $tipo_profissional);
 }
