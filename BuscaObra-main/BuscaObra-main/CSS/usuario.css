@@ -1,0 +1,243 @@
+body {
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(rgba(34, 34, 34, 0.6), rgba(34, 34, 34, 0.6)),
+      url(../images/Quais-os-tipos-de-obras-existentes-no-condominio.png) no-repeat center center fixed;
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
+}
+
+.container {
+  max-width: 600px;
+  margin: 100px auto;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.288);
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+  animation: fadeIn 1s ease;
+  position: relative;
+}
+
+/* Estilo para o cabeçalho */
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: rgb(0, 0, 0); /* Amarelo */
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  animation: textGlow 1.5s infinite alternate;
+}
+
+
+/* Estilos para o grupo de formulário */
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+/* Estilo para inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  width: 100%;
+  border-radius: 5px;
+  padding: 12px; /* Aumentado para conforto ao digitar */
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  font-size: 1rem;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus {
+  outline: none;
+  transform: scale(1.02); /* Efeito de zoom ao focar */
+}
+
+/* Estilo do botão primário */
+.btn-primary {
+  background-color: #98d112; /* Azul */
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 12px 20px; /* Aumentado para conforto */
+  font-size: 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+.btn-primary:hover {
+  background-color: #5f9ea0; /* Verde Água mais claro */
+  transform: translateY(-3px) scale(1.05); /* Efeito de levitar ao passar o mouse */
+}
+
+.btn-primary:active {
+  transform: translateY(0); /* Efeito de clique */
+}
+
+/* Mensagens de feedback */
+.feedback {
+  margin-top: 15px;
+  color: #28a745; /* Verde */
+  text-align: center;
+}
+
+/* Rodapé */
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.9rem;
+  color: #6c757d; /* Cinza */
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+
+@keyframes backgroundPulse {
+  0% {
+      background-color: #f0f4f8;
+  }
+  100% {
+      background-color: #e0e6ed; /* Azul claro */
+  }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .container {
+      padding: 20px;
+  }
+
+  h2 {
+      font-size: 2rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+      padding: 10px; /* Ajuste de padding */
+  }
+
+  .btn-primary {
+      font-size: 1rem;
+      padding: 10px;
+  }
+
+  .footer {
+      font-size: 0.8rem;
+  }
+}
+
+/* Adicionando mais estilos */
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: bold;
+}
+
+.required {
+  color: red; /* Vermelho para campos obrigatórios */
+}
+
+.success-message {
+  color: #28a745; /* Verde */
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.error-message {
+  color: #dc3545; /* Vermelho */
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+/* Estilo para campos de texto */
+input::placeholder {
+  color: #3b3b3b;
+  font-style: italic;
+}
+
+/* Sombreamento ao passar o mouse sobre o botão */
+.btn-primary:focus {
+  box-shadow: 0 0 10px rgba(227, 252, 3, 0.6);
+}
+
+/* Efeito de animação de carregamento */
+.loader {
+  border: 6px solid #f3f3f3; /* Cor de fundo */
+  border-top: 6px solid #111111; /* Cor do topo */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Efeito de animação de entrada para elementos */
+.element {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.5s forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Estilo de fundo animado */
+.bouncing-bg {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  background-color: rgba(255, 99, 71, 0.2); /* Tom de vermelho claro */
+  border-radius: 50%;
+  animation: bounce 5s infinite;
+  z-index: -1;
+}
+
+@keyframes bounce {
+  0% {
+      transform: translate(0, 0);
+  }
+  50% {
+      transform: translate(-20px, -20px);
+  }
+  100% {
+      transform: translate(0, 0);
+  }
+}
+
+/* Efeito de mudança de cor suave para o botão ao passar o mouse */
+.btn-primary {
+  background-color: #fffb00; /* Azul */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Mudanças de cor e escala para o botão ao ser clicado */
+.btn-primary:active {
+  background-color: #242424; /* Verde Água mais claro */
+  transform: scale(0.95);
+} 

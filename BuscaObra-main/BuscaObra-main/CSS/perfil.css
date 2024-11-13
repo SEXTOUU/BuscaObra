@@ -1,0 +1,135 @@
+/* Definir o fundo da página com a imagem e o gradiente */
+body {
+    background: linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)),
+                url(../images/Quais-os-tipos-de-obras-existentes-no-condominio.png) no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Lilita One', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Estilo do cabeçalho e navegação */
+header {
+    background-color: rgba(255, 255, 255, 0.8); /* Fundo translúcido para o cabeçalho */
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+nav.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilo do título */
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-top: 30px;
+}
+
+/* Estilo para a seção de perfil */
+.profile-section {
+    background-color: rgba(255, 255, 255, 0.9); /* Fundo translúcido para o conteúdo */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    margin: 50px auto;
+    max-width: 800px;
+    padding: 30px;
+}
+
+/* Estilo da mensagem */
+.message {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #ff5722; /* Cor alaranjada para a mensagem */
+    margin-bottom: 20px;
+}
+
+/* Exibição dos dados do usuário */
+.user-data p {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 10px 0;
+}
+
+.user-data strong {
+    color: #333;
+}
+
+/* Estilo do formulário */
+form {
+    background-color: rgba(255, 255, 255, 0.8); /* Fundo translúcido para o formulário */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+}
+
+/* Estilo dos campos do formulário */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 1rem;
+    color: #333;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    color: #333;
+}
+
+textarea {
+    height: 120px;
+}
+
+button.btn-save {
+    background-color: #007bff; /* Cor azul para o botão de salvar */
+    color: white;
+    font-size: 1.1rem;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+button.btn-save:hover {
+    background-color: #0056b3; /* Azul mais escuro no hover */
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+    .profile-section {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    form {
+        margin-top: 20px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 1rem;
+    }
+}
