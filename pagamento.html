@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparação de Planos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="plano">Escolha seu Plano Ideal</h1>
+            <p id="oi">Compare nossos planos e encontre a melhor opção para você!</p>
+        </div>
+        <div class="plans">
+            <div class="plan premium" id="premiumPlan">
+                <h2>Plano Premium</h2>
+                <div class="price">R$ 10,00/mês</div>
+                <p>Recursos avançados para uma experiência completa.</p>
+                <div class="benefits">
+                    <h3>Benefícios Premium:</h3>
+                    <ul>
+                    <li><i class="fas fa-check-circle"></i> Maior Destaque no Carrossel: Aumentar o tempo de exibição ou a visibilidade dos profissionais premium na área de destaque da página inicial.</li>
+                        <li><i class="fas fa-check-circle"></i> Prioridade nos Resultados de Busca: Garantir que os perfis premium apareçam no topo das pesquisas de profissionais na plataforma, aumentando as chances de contratação.</li>
+                        <li><i class="fas fa-check-circle"></i> Anúncios Promovidos: Permitir que os profissionais premium promovam um ou dois de seus anúncios mensais, destacando projetos específicos</li>
+                    </ul>
+                </div>
+                <div class="advantages">
+                <button id="subscribeButton">Assinar Agora</button>
+                <div id="paymentOptions" style="display:none;">
+                    <h3>Escolha a forma de pagamento:</h3>
+                    <form id="paymentForm">
+                        <label>
+                            <input type="radio" name="paymentMethod" value="Cartão de Crédito" required>
+                            <i class="fas fa-credit-card"></i> Cartão de Crédito
+                        </label><br>
+                        <label>
+                            <input type="radio" name="paymentMethod" value="Boleto Bancário">
+                            <i class="fas fa-barcode"></i> Boleto Bancário
+                        </label><br>
+                        <label>
+                            <input type="radio" name="paymentMethod" value="Transferência Bancária">
+                            <i class="fas fa-piggy-bank"></i> Transferência Bancária
+                        </label><br>
+                        <label>
+                            <input type="radio" name="paymentMethod" value="PayPal">
+                            <i class="fas fa-paypal"></i> PayPal
+                        </label><br>
+                        <button type="submit" id="confirmPaymentButton">Confirmar Pagamento</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('subscribeButton').addEventListener('click', function() {
+            document.getElementById('paymentOptions').style.display = 'block';
+        });
+
+        document.getElementById('paymentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            alert(`Você escolheu ${paymentMethod} como forma de pagamento.`);
+        });
+
+        document.getElementById('subscribeButton').addEventListener('click', function() {
+        document.getElementById('paymentOptions').style.display = 'block';
+    });
+
+    document.getElementById('paymentForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        try {
+            // Envia uma requisição para o servidor Node.js
+            const response = await fetch("/criar_pagamento", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const data = await response.json();
+            window.location.href = `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${data.id}`;
+        } catch (error) {
+            alert("Erro ao iniciar o pagamento.");
+            console.error(error);
+        }
+    });
+    </script>
+    <script src="server.js"></script>
+</body>
+</html>
