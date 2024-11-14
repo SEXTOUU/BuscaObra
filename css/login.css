@@ -1,25 +1,22 @@
 body {
-  background-color: #1a1a1a; /* Fundo escuro */
-  font-family: "Lilita One", sans-serif;
-  font-weight: 100;
-  font-style: normal;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  animation: backgroundPulse 8s infinite alternate;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(rgba(34, 34, 34, 0.6), rgba(34, 34, 34, 0.6)),
+      url(../images/Quais-os-tipos-de-obras-existentes-no-condominio.png) no-repeat center center fixed;
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
 }
+
 .t{
   color: #f3f3f3;
   text-align: center;
 }
 .container {
   max-width: 600px;
+  text-align: center;
   margin: 100px auto;
   padding: 30px;
-  background: linear-gradient(135deg, #333333, #444444); /* Gradiente escuro */
+  background: rgba(255, 255, 255, 0.288);
   border-radius: 15px;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
   animation: fadeIn 1s ease;
@@ -29,7 +26,7 @@ body {
 /* Estilos para o cabeçalho */
 h1 {
   text-align: center;
-  color: #ffcc00; /* Amarelo brilhante */
+  color: #000000; /* Amarelo brilhante */
   font-size: 2.5rem;
   margin-bottom: 20px;
   text-transform: uppercase;
@@ -44,27 +41,23 @@ h1 {
   position: relative;
 }
 
-/* Estilo para inputs */
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+select {
   width: 100%;
-  border: 2px solid #ffcc00; /* Amarelo brilhante */
-  border-radius: 10px;
-  padding: 12px;
+  border-radius: 5px;
+  padding: 12px; /* Aumentado para conforto ao digitar */
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
   font-size: 1rem;
-  background-color: #222; /* Fundo escuro para inputs */
-  color: #ffffff; /* Texto branco */
 }
 
 input[type="text"]:focus,
 input[type="email"]:focus,
-input[type="password"]:focus {
-  border-color: #ffdb4d; /* Amarelo mais claro */
+input[type="password"]:focus,
+select:focus {
   outline: none;
-  box-shadow: 0 0 12px rgba(95, 93, 87, 0.7); /* Sombra suave */
-  transform: scale(1.02); /* Efeito de zoom */
+  transform: scale(1.02); /* Efeito de zoom ao focar */
 }
 
 /* Estilo do botão de login */
@@ -117,14 +110,11 @@ input[type="password"]:focus {
   }
 }
 
-@keyframes textGlow {
-  0% {
-      text-shadow: 0 0 5px #ffcc00, 0 0 10px #ffcc00, 0 0 15px #ffcc00;
-  }
-  100% {
-      text-shadow: 0 0 10px #686555, 0 0 20px #6e6c5f, 0 0 30px #706d60;
-  }
-}
+.img-fluid{
+  border-radius: 20px;
+  width: 250px;
+  height: 250px;
+} 
 
 @keyframes backgroundPulse {
   0% {

@@ -1,94 +1,69 @@
-/* Estilo geral */
+/* Definir o fundo da página com a imagem e o gradiente */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    background: linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), 
+                url(../images/Quais-os-tipos-de-obras-existentes-no-condominio.png) no-repeat center center fixed;
+    background-size: cover;
+    color: #333; /* Texto escuro para contraste suave */
+    font-family: 'Lilita One', sans-serif;
     margin: 0;
     padding: 0;
 }
 
+/* Container principal */
 .container {
-    max-width: 1200px;
+    max-width: 900px; /* Largura menor para dar um ar mais limpo */
     margin: 0 auto;
-    padding: 20px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.8); /* Fundo branco com transparência */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra leve e suave */
+    margin-top: 50px;
 }
 
-h2, h3 {
-    color: #333;
+/* Estilo do título */
+h2 {
+    font-size: 2rem;
+    color: #333; /* Cor escura para o título */
     text-align: center;
     margin-bottom: 20px;
 }
 
+/* Estilo do subtítulo */
 h3 {
     font-size: 1.5rem;
+    color: #555; /* Cor mais suave para o subtítulo */
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 /* Estilo do formulário */
 form {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
-form .form-group {
-    margin-bottom: 20px;
-}
-
-form .form-control {
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    padding: 10px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-form .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-form label {
+/* Estilo do select (campo de escolha do profissional) */
+.form-group label {
     font-size: 1.1rem;
-    font-weight: bold;
+    color: #333; /* Cor neutra */
     margin-bottom: 10px;
 }
 
-form button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
+.form-control {
+    background-color: rgba(255, 255, 255, 0.7); /* Fundo translúcido */
+    border: 1px solid #ddd;
+    padding: 10px;
     font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    color: #333;
 }
 
-form button:hover {
-    background-color: #0056b3;
-}
-
-/* Estilo dos cards de profissionais */
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
+/* Estilo para o cartão de profissionais */
 .card {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.9); /* Fundo claro e translúcido */
+    border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
     margin-bottom: 20px;
-    width: 100%;
-    max-width: 300px;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombrinha sutil */
 }
 
 .card-body {
@@ -96,70 +71,51 @@ form button:hover {
 }
 
 .card-title {
-    font-size: 1.25rem;
-    color: #333;
+    font-size: 1.3rem;
+    color: #333; /* Cor escura para título */
     font-weight: bold;
-    margin-bottom: 10px;
 }
 
 .card-text {
     font-size: 1rem;
-    color: #555;
-    line-height: 1.5;
+    color: #555; /* Cor suave para o texto */
 }
 
 .card-text strong {
-    color: #007bff;
+    color: #333; /* Cor escura para os destaques */
 }
 
+/* Botão "Ver mais" */
 .btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    font-size: 1rem;
+    background-color: #333; /* Cor escura para contraste */
+    color: #fff;
+    font-weight: bold;
     border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    text-decoration: none;
+    padding: 10px 15px;
+    text-transform: uppercase;
+    font-size: 1rem;
+    text-align: center;
     display: inline-block;
+    text-decoration: none;
+    opacity: 0.8;
 }
 
 .btn:hover {
-    background-color: #0056b3;
+    background-color: #444; /* Tom um pouco mais escuro no hover */
+    opacity: 1; /* Opacidade plena no hover */
 }
 
-/* Estilo do filtro (seleção de profissional) */
-form select {
-    background-color: #f8f9fa;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    padding: 10px;
-    font-size: 1rem;
-    width: 100%;
-    transition: border-color 0.3s;
-}
-
-form select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Estilo para mensagens de erro e sucesso */
-p {
-    font-size: 1rem;
-    text-align: center;
-    color: #333;
-}
-
-/* Responsividade */
+/* Responsividade: ajustes para telas menores */
 @media (max-width: 768px) {
-    .row {
-        justify-content: center;
+    .container {
+        padding: 20px;
     }
 
     .card {
-        width: 100%;
         margin-bottom: 15px;
+    }
+
+    .col-md-4 {
+        width: 100%;
     }
 }

@@ -49,8 +49,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                 <a href="contato.html" class="social-links">CONTATO</a>
                 <a href="sobre.html" class="social-links">SOBRE</a>
                 <a href="suporte.html" class="social-links">SUPORTE</a>
-                <a href="#" class="social-links">XXXXX</a>    
-                <a href="#" class="social-links">XXXXX</a>
+              
             </div>
 
             <!-- Menu de Perfil do Usuário -->

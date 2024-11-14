@@ -1,20 +1,17 @@
 body {
-  background-color: #1a1a1a; /* Fundo escuro */
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  animation: backgroundPulse 8s infinite alternate;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(rgba(34, 34, 34, 0.6), rgba(34, 34, 34, 0.6)),
+      url(../images/Quais-os-tipos-de-obras-existentes-no-condominio.png) no-repeat center center fixed;
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
 }
 
 .container {
   max-width: 600px;
   margin: 100px auto;
   padding: 30px;
-  background: linear-gradient(135deg, #333333, #444444); /* Gradiente escuro */
+  background: rgba(255, 255, 255, 0.288);
   border-radius: 15px;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
   animation: fadeIn 1s ease;
@@ -26,12 +23,32 @@ body {
 h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #FFD700; /* Amarelo */
+  color: black; /* Amarelo */
   font-size: 2.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   position: relative;
   animation: textGlow 1.5s infinite alternate;
+}
+
+/* Estilo para inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  width: 100%;
+  border-radius: 5px;
+  padding: 12px; /* Aumentado para conforto ao digitar */
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  font-size: 1rem;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus {
+  outline: none;
+  transform: scale(1.02); /* Efeito de zoom ao focar */
 }
 
 /* Grupo de formulário */
@@ -89,7 +106,7 @@ select:focus {
 /* Mensagens de feedback */
 .feedback {
   margin-top: 15px;
-  color: #28a745; /* Verde */
+  color: #000000; /* Verde */
   text-align: center;
   font-size: 1.1rem;
 }
@@ -114,14 +131,7 @@ select:focus {
   }
 }
 
-@keyframes textGlow {
-  0% {
-      text-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700, 0 0 15px #FFD700;
-  }
-  100% {
-      text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #FFD700;
-  }
-}
+
 
 @keyframes backgroundPulse {
   0% {
@@ -191,7 +201,7 @@ label {
 }
 
 .success-message {
-  color: #28a745; /* Verde */
+  color: #000000; /* Verde */
   font-size: 1.2rem;
   text-align: center;
 }

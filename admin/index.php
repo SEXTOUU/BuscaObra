@@ -1,3 +1,35 @@
+<?php
+session_start();
+require_once "../config.php";
+
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || $_SESSION['cli_tipo'] !== 4) {
+    header("Location: login.php");
+    exit;
+} else {
+    $usuario = $_SESSION['usuario'];
+    $cli_tipo = $_SESSION['cli_tipo'];
+}
+
+$pdo = getDatabaseConnection();
+
+$stmt = $pdo->prepare("SELECT * FROM admins WHERE cli_id = :cli_id AND status = 1");
+$stmt->bindParam(':cli_id', $_SESSION['cli_id']);
+$stmt->execute();
+
+if ($stmt->rowCount() === 0) {
+    header("Location: error.php?error=not_admin");
+    exit;
+}
+
+$admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($admin['nivel_acesso'] < 2) { 
+    header("Location: error.php?error=insufficient_privileges");
+    exit;
+}
+
+
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -5,9 +37,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Controle - BuscaObra</title>
 
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -21,14 +54,14 @@
         <!-- Barra Lateral -->
         <nav class="sidebar" id="sidebar">
             <div class="logo">
-                <img src="user.jpeg" alt="Logo">
+                <img src="assets/images/user.jpeg" alt="Logo">
                 <h2>BuscaObra</h2>
             </div>
 
             <ul>
                 <span class="title-menu">MENU</span>
 
-                <li><a href="#" class="sidebaractive"><i
+                <li><a href="index.php" class="sidebaractive"><i
                             class="fas fa-tachometer-alt"></i>
                         Dashboard</a></li>
 
@@ -59,7 +92,7 @@
                     <a href="#"><i class="fas fa-user"></i> Clientes <i
                             class="fas fa-chevron-down dropdown-icon"></i></a>
                     <div class="dropdown-content">
-                        <a href="#">Lista de Clientes</a>
+                        <a href="listacliente.php">Lista de Clientes</a>
                         <a href="#">Favoritos e Avaliações</a>
                     </div>
                 </li>
@@ -174,17 +207,17 @@
 
                 <!-- Informações do Usuário no Cabeçalho -->
                 <div class="user-info">
-                    <img src="user.jpeg" alt="User">
-                    <span>Michelle White</span>
+                    <img src="assets/images/user.jpeg" alt="User">
+                    <span><?php echo $usuario; ?></span>
                     <i class="fas fa-caret-down"></i>
                     <div class="user-dropdown">
                         <ul>
-                            <li><i class="fa-solid fa-user"></i> Perfil</li>
-                            <li><i class="fas fa-star"></i> Planos e Assinaturas</li>
+                            <li href="#"><i class="fa-solid fa-user"></i> Perfil</li>
+                            <li href="#"><i class="fas fa-star"></i> Planos e Assinaturas</li>
                             <hr>
                             <li href="#"><i class="fas fa-cog"></i> Configurações</li>
                             <li href="#"><i class="fas fa-question"></i> Ajuda</li>
-                            <li onclick="logout()"><i class="fa-solid fa-right-to-bracket"></i> Sair</li>
+                            <li href=""><i class="fa-solid fa-right-to-bracket"></i> Sair</li>
                         </ul>
                     </div>
                 </div>
@@ -194,13 +227,15 @@
                 <h2>Painel de Controle</h2>
             </div>
 
+            <!-- Paginação Inicio -->
+
             <!-- Cartões do Dashboard -->
             <div class="dashboard-cards">
                 <div class="card">
                     <div class="icon-container">
                         <i class="fa-solid fa-user"></i>
                     </div>
-                    <h3>3500</h3>
+                    <h3><?php echo clientecount(); ?></h3>
                     <p>Usuários Cadastrados</p>
                     <div class="progress-bar">
                         <div class="progress" style="width: 20%;"></div>
@@ -211,8 +246,8 @@
                     <div class="icon-container">
                         <i class="fas fa-cube"></i>
                     </div>
-                    <h3>3500</h3>
-                    <p>Orders</p>
+                    <h3><?php echo profissionalcount(); ?></h3>
+                    <p>Profissionais</p>
                     <div class="progress-bar">
                         <div class="progress" style="width: 50%;"></div>
                     </div>
@@ -222,8 +257,8 @@
                     <div class="icon-container">
                         <i class="fas fa-arrow-down trend-icon"></i>
                     </div>
-                    <h3>3500</h3>
-                    <p>Tickets ou Suporte</p>
+                    <h3>0</h3>
+                    <p>Teste</p>
                     <div class="progress-bar">
                         <div class="progress" style="width: 60%;"></div>
                     </div>
@@ -297,45 +332,38 @@
                         <caption class="data-table-caption">Tabela de Dados</caption>
                         <thead class="data-table-header">
                             <tr class="data-table-row">
+                                <th>ID</th>
                                 <th>Nome</th>
-                                <th>Preço</th>
-                                <th>Quantidade</th>
-                                <th>Total</th>
+                                <th>Email</th>
+                                <th>Bairro</th>
+                                <th>Tipo</th>
                             </tr>
                         </thead>
                         <tbody class="data-table-body">
-                            <tr class="data-table-row">
-                                <td>Item 1</td>
-                                <td>R$ 10,00</td>
-                                <td>2</td>
-                                <td>R$ 20,00</td>
-                            </tr>
-                            <tr class="data-table-row">
-                                <td>Item 2</td>
-                                <td>R$ 15,00</td>
-                                <td>1</td>
-                                <td>R$ 15,00</td>
+                            <?php
+                            try{
+                                $pdo = getDatabaseConnection();
+                                $result = $pdo->prepare("SELECT cli_id, cli_nome, cli_email, cli_bairro, cli_tipo FROM cliente LIMIT 5");
+                                $result->execute();
 
-                            </tr>
-                            <tr class="data-table-row">
-                                <td>Item 3</td>
-                                <td>R$ 20,00</td>
-                                <td>3</td>
-                                <td>R$ 60,00</td>
-                            </tr>
-                            <tr class="data-table-row">
-                                <td>Item 4</td>
-                                <td>R$ 20,00</td>
-                                <td>3</td>
-                                <td>R$ 60,00</td>
-                            </tr>
-                            <tr class="data-table-row">
-                                <td>Item 5</td>
-                                <td>R$ 20,00</td>
-                                <td>3</td>
-                                <td>R$ 60,00</td>
-                            </tr>
-                            
+    
+                                if ($result->rowCount() > 0) {
+                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                        echo '<tr class="data-table-row">';
+                                        echo '<td>' . htmlspecialchars($row['cli_id']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($row['cli_nome']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($row['cli_email']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($row['cli_bairro']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($row['cli_tipo']) . '</td>';
+                                        echo '</tr>';
+                                    }          
+                                } else {
+                                    echo '<tr><td colspan="5">Nenhum resultado encontrado.</td></tr>';
+                                }
+                            } catch (PDOException $e) {
+                                echo "Erro ao conectar ao banco de dados: " . $e->getMessage();
+                            }
+                            ?>                         
                         </tbody>
                     </table>
                 
@@ -373,6 +401,8 @@
                     </div>
                 </div>
             </div> 
+
+            <!-- Paginação Fim -->
         </main>
     </div>
 
@@ -381,6 +411,6 @@
         <p>&copy; 2024 BuscaObra. Todos os direitos reservados. <p class="version">Versão 1.0</p></p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>

@@ -1,6 +1,11 @@
 <?php
 require_once "config.php";
 
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+  redirect("index.php");
+  exit;
+}
+
 if (isset($_POST['cadastrar'])) {
     $nome = $_POST['usuario'];
     $email = $_POST['email'];
@@ -69,8 +74,7 @@ if (isset($_POST['cadastrar'])) {
 </head>
 <body>
   <div class="container">
-    <img src="iamges/pessoas-em-filmagem-media-trabalhando-juntas_23-2150290079.avif" class="img-fluid mb-4" alt="Imagem de Usuário">
-    <h2><?php echo $titulo; ?> - Cadastror Usuário</h2>
+    <h2> Cadastro de Contratante</h2>
     <form id="usuario-form" method="POST">
       <div class="form-group">
         <input type="text" id="nome-usuario" name="usuario" class="form-control" placeholder="Nome Completo" required>

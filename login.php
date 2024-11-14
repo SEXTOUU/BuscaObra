@@ -1,38 +1,36 @@
 <?php
 require_once "config.php";
 
-// Verifica se o formulário de login foi enviado
+if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+  redirect("index.php");
+  exit;
+}
+
 if (isset($_POST['login'])) {
 
   $usuario = $_POST['usuario'];
   $senha = $_POST['senha'];
 
-  // Verifica se os campos estão preenchidos
   if (empty($usuario) || empty($senha)) {
     echo "<script>alert('Por favor, preencha todos os campos!')</script>";
   } else {
-    // Conexão com o banco de dados
     $pdo = getDatabaseConnection();
     $stmt = $pdo->prepare("SELECT * FROM cliente WHERE cli_nome = :usuario");
     $stmt->bindParam(':usuario', $usuario);
     $stmt->execute();
 
-    // Verifica se o usuário foi encontrado no banco de dados
     if ($stmt->rowCount() > 0) {
       $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-      // Verifica a senha usando password_verify
       if (password_verify($senha, $user['cli_senha'])) {
-        // Inicia a sessão e registra as informações do usuário
         session_start();
         $_SESSION['usuario'] = $usuario;
-        $_SESSION['cli_id'] = $user['cli_id']; // Armazena o ID do cliente
+        $_SESSION['cli_id'] = $user['cli_id'];
         $_SESSION['cli_tipo'] = $user['cli_tipo'];
-        $_SESSION['logged_in'] = true; // Marca o usuário como logado
+        $_SESSION['logged_in'] = true;
 
-        // Redireciona para a página principal (ou página de origem)
-        header("Location: index.php");
-        exit(); // Garante que o script pare após o redirecionamento
+        redirect("index.php");
+        exit();
       } else {
         echo "<script>alert('Credenciais inválidas')</script>";
       }
@@ -58,8 +56,8 @@ if (isset($_POST['login'])) {
 </head>
 <body>
   <div class="container">
-    <h1 class="text-center" id="titulo">Bem-vindo ao Sistema</h1>
-    <img src="images/logo.jpeg" class="img-fluid mb-4" alt="Imagem de Boas-Vindas">
+    <h1 class="text-center" id="titulo">Faça o seu login </h1>
+    <img src="images/logo.jpeg"  class="img-fluid mb-4" alt="Imagem de Boas-Vindas">
 
     <form id="login-form" method="POST">
       <div class="form-group">
@@ -71,7 +69,8 @@ if (isset($_POST['login'])) {
       <button type="submit" name="login" class="btn btn-success btn-block" id="btn-login">Login</button>
     </form>
 
-    <p class="t">Não tem uma conta? <a href="cadastro.html" id="link-cadastro">Cadastre-se</a></p>
+    <p class="text-center">Não tem uma conta? <a href="cadastro.html" id="link-cadastro">Cadastre-se</a></p>
+    <p class="text-center"><a href="recuperar-senha.php" class="" >Esquerceu sua senha?</a></p>
     <div class="feedback" id="feedback-login"></div>
   </div>
   <script src="js/login.js"></script>

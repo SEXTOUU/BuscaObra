@@ -30,8 +30,8 @@ formCadastro.addEventListener('submit', function (event) {
       // Redireciona para a página correspondente
       if (tipoUsuario === 'administrador') {
         window.location.href = 'administrador.html'; // Redireciona para a página do administrador
-      } else if (tipoUsuario === 'funcionario') {
-        window.location.href = 'funcionario.php'; // Redireciona para a página do funcionário
+      } else if (tipoUsuario === 'profissional') {
+        window.location.href = 'profissional.php'; // Redireciona para a página do funcionário
       } else if (tipoUsuario === 'usuario') {
         window.location.href = 'usuario.php'; // Redireciona para a página do usuário
       }

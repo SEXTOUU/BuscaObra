@@ -74,12 +74,18 @@ CREATE TABLE profissionais (
 
 -- Tabela Admins (extensão de cliente para dados específicos de admins)
 CREATE TABLE admins (
-    admin_id INT PRIMARY KEY AUTO_INCREMENT,
-    cli_id INT UNIQUE NOT NULL,  -- Relaciona com 'cliente' de forma 1:1
-    admin_departamento VARCHAR(50) NOT NULL,
-    admin_cargo VARCHAR(50) NOT NULL,
-    FOREIGN KEY (cli_id) REFERENCES cliente(cli_id) ON DELETE CASCADE
+    admin_id INT AUTO_INCREMENT PRIMARY KEY,
+    cli_id INT NOT NULL,
+    admin_departamento VARCHAR(100),
+    admin_cargo VARCHAR(100),
+    admin_senha VARCHAR(255),
+    nivel_acesso TINYINT DEFAULT 1,
+    status TINYINT DEFAULT 1,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_modificacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (cli_id) REFERENCES cliente(cli_id)
 );
+
 
 -- Tabela Avaliacoes (armazena avaliações e comentários dos profissionais)
 CREATE TABLE avaliacoes (
@@ -111,3 +117,14 @@ INSERT INTO planos (nome, prioridade) VALUES
     ('Gratuito', 1),
     ('Premium', 2),
     ('VIP', 3);
+
+-- SuperAdmin
+INSERT INTO admins (cli_id, admin_departamento, admin_cargo, admin_senha, nivel_acesso, status)
+VALUES (
+    1,                             -- ID do cliente associado ao super administrador
+    'Diretoria',                   -- Departamento
+    'Super Admin',                 -- Cargo
+    '$2y$10$vouxOEzuPvGzt1mKU2o5sOMvwa8ZnS/7psZkEw8JMSi9KQJRaR.DW',  -- Hash da senha "123456"
+    3,                             -- Nível de acesso para super administrador
+    1                              -- Status ativo
+);

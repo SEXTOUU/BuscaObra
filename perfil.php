@@ -103,12 +103,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     <link rel="stylesheet" href="css/perfil.css">
 </head>
 <body>
-    <header>
-        <nav class="container">
-            <!-- Cabeçalho com links de navegação e outros conteúdos -->
-        </nav>
-    </header>
-
+    
     <main>
         <section class="profile-section">
             <h2>Meu Perfil</h2>

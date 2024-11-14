@@ -1,3 +1,52 @@
+<?php
+session_start();
+require_once "../config.php";
+
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || $_SESSION['cli_tipo'] !== 4) {
+    header("Location: login.php");
+    exit;
+} else {
+    $usuario = $_SESSION['usuario'];
+    $cli_tipo = $_SESSION['cli_tipo'];
+}
+
+$pdo = getDatabaseConnection();
+
+$stmt = $pdo->prepare("SELECT * FROM admins WHERE cli_id = :cli_id AND status = 1");
+$stmt->bindParam(':cli_id', $_SESSION['cli_id']);
+$stmt->execute();
+
+if ($stmt->rowCount() === 0) {
+    header("Location: error.php?error=not_admin");
+    exit;
+}
+
+$admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($admin['nivel_acesso'] < 2) { 
+    header("Location: error.php?error=insufficient_privileges");
+    exit;
+}
+
+if (isset($_POST['delete-salvar'])) {
+
+    $cli_id = $_POST['cli_id'];
+
+    deletarCliente($cli_id);
+
+    redirect("admin/listacliente.php");
+}
+
+// Configura a página atual e o número de registros por página
+$paginaAtual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$registrosPorPagina = 10;
+
+// Obter os dados paginados usando a função
+$resultado = getClientesPaginados($paginaAtual, $registrosPorPagina);
+$clientes = $resultado['dados'];
+$totalPaginas = $resultado['totalPaginas'];
+
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -7,7 +56,7 @@
 
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -21,14 +70,14 @@
         <!-- Barra Lateral -->
         <nav class="sidebar" id="sidebar">
             <div class="logo">
-                <img src="user.jpeg" alt="Logo">
+                <img src="assets/images/user.jpeg" alt="Logo">
                 <h2>BuscaObra</h2>
             </div>
 
             <ul>
                 <span class="title-menu">MENU</span>
 
-                <li><a href="#" class="sidebaractive"><i
+                <li><a href="index.php"><i
                             class="fas fa-tachometer-alt"></i>
                         Dashboard</a></li>
 
@@ -59,7 +108,7 @@
                     <a href="#"><i class="fas fa-user"></i> Clientes <i
                             class="fas fa-chevron-down dropdown-icon"></i></a>
                     <div class="dropdown-content">
-                        <a href="#">Lista de Clientes</a>
+                        <a href="listacliente.php" >Lista de Clientes</a>
                         <a href="#">Favoritos e Avaliações</a>
                     </div>
                 </li>
@@ -174,8 +223,8 @@
 
                 <!-- Informações do Usuário no Cabeçalho -->
                 <div class="user-info">
-                    <img src="user.jpeg" alt="User">
-                    <span>Michelle White</span>
+                    <img src="assets/images/user.jpeg" alt="User">
+                    <span><?php echo $usuario; ?></span>
                     <i class="fas fa-caret-down"></i>
                     <div class="user-dropdown">
                         <ul>
@@ -184,12 +233,16 @@
                             <hr>
                             <li href="#"><i class="fas fa-cog"></i> Configurações</li>
                             <li href="#"><i class="fas fa-question"></i> Ajuda</li>
-                            <li onclick="logout()"><i class="fa-solid fa-right-to-bracket"></i> Sair</li>
+                            <li href="logout.php"><i class="fa-solid fa-right-to-bracket"></i> Sair</li>
                         </ul>
                     </div>
                 </div>
             </header>
-         
+        
+            <div class="content">
+                <h2>Painel de Clientes</h2>
+            </div>
+
             <!-- Tabela de Dados -->
             <div class="dashboard-cards">
                 <div class="card">           
@@ -200,80 +253,40 @@
                                 <th>ID</th>
                                 <th>Nome</th>
                                 <th>Email</th>
-                                <th>Telefone</th>
+                                <th>Bairro</th>
                                 <th>Cargo</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody class="data-table-body">
-                            <tr class="data-table-row">
-                                <td>1</td>
-                                <td>Item 1</td>
-                                <td>R$ 10,00</td>
-                                <td>2</td>
-                                <td>R$ 20,00</td>
-                                <td>
-                                    <button class="open-modal-btn" id="openModalBtn1"><i class="fa-solid fa-eye"></i></button>    
-                                    <button class="open-modal-btn" id="openModalBtn2"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <button class="open-modal-btn" id="openModalBtnDelete1"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr class="data-table-row">
-                                <td>2</td>
-                                <td>Item 2</td>
-                                <td>R$ 15,00</td>
-                                <td>1</td>
-                                <td>R$ 15,00</td>
-                                <td>
-                                    <button class="open-modal-btn" id="openModalBtn1"><i class="fa-solid fa-eye"></i></button>    
-                                    <button class="open-modal-btn" id="openModalBtn2"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <button class="open-modal-btn" id="openModalBtnDelete1"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr class="data-table-row">
-                                <td>3</td>
-                                <td>Item 3</td>
-                                <td>R$ 20,00</td>
-                                <td>3</td>
-                                <td>R$ 60,00</td>
-                                <td>
-                                    <button class="open-modal-btn" id="openModalBtn1"><i class="fa-solid fa-eye"></i></button>    
-                                    <button class="open-modal-btn" id="openModalBtn2"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <button class="open-modal-btn" id="openModalBtnDelete1"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr class="data-table-row">
-                                <td>4</td>
-                                <td>Item 4</td>
-                                <td>R$ 20,00</td>
-                                <td>3</td>
-                                <td>R$ 60,00</td>
-                                <td>
-                                    <button class="open-modal-btn" id="openModalBtn1"><i class="fa-solid fa-eye"></i></button>    
-                                    <button class="open-modal-btn" id="openModalBtn2"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <button class="open-modal-btn" id="openModalBtnDelete1"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr class="data-table-row">
-                                <td>5</td>
-                                <td>Item 5</td>
-                                <td>R$ 20,00</td>
-                                <td>3</td>
-                                <td>R$ 60,00</td>
-                                <td>
-                                    <button class="open-modal-btn" id="openModalBtn1"><i class="fa-solid fa-eye"></i></button>    
-                                    <button class="open-modal-btn" id="openModalBtn2"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <button class="open-modal-btn" id="openModalBtnDelete1"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            
+                        <?php
+                            if (count($clientes) > 0) {
+                                foreach ($clientes as $row) {
+                                    echo '<tr class="data-table-row">';
+                                    echo '<td>' . htmlspecialchars($row['cli_id']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($row['cli_nome']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($row['cli_email']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($row['cli_bairro']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($row['cargo']) . '</td>';
+                                    echo '<td> 
+                                            <button class="open-modal-btn" id="openModalBtn1" data-id="' . $row['cli_id'] . '"><i class="fa-solid fa-eye"></i></button>    
+                                            <button class="open-modal-btn" id="openModalBtn2" data-id="' . $row['cli_id'] . '"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <button class="open-modal-btn" id="openModalBtnDelete1" data-id="' . $row['cli_id'] . '"><i class="fa-solid fa-trash"></i></button>
+                                        </td>';
+                                    echo '</tr>';
+                                }          
+                            } else {
+                                echo '<tr><td colspan="6">Nenhum resultado encontrado.</td></tr>';
+                            }
+                        ?>           
                         </tbody>
                     </table>
                     <div id="paginacao" class="paginacao">
-                        <button onclick="irParaPagina(paginaAtual - 1)" disabled id="btn-anterior">Anterior</button>
-                        <span id="info-pagina">Página 1</span>
-                        <button onclick="irParaPagina(paginaAtual + 1)" id="btn-proximo">Próximo</button>
+                        <button onclick="window.location.href='listacliente.php?pagina=<?php echo $paginaAtual - 1; ?>'" id="btn-anterior" <?php echo ($paginaAtual <= 1) ? 'disabled' : ''; ?>>Anterior</button>
+                        <span id="info-pagina">Página <?php echo $paginaAtual; ?> de <?php echo $totalPaginas; ?></span>
+                        <button onclick="window.location.href='listacliente.php?pagina=<?php echo $paginaAtual + 1; ?>'" id="btn-proximo" <?php echo ($paginaAtual >= $totalPaginas) ? 'disabled' : ''; ?>>Próximo</button>
                     </div>
+
                 </div>
             </div> 
             
@@ -283,33 +296,33 @@
                     <span class="close-btn" id="closeViewModal">&times;</span>
                     <h2 id="view-modal-title">Detalhes do Cliente</h2>
                     <p id="view-modal-description"></p>
-                    <form method="post" class="modal-form">
+                    <form method="post" class="modal-form" id="view-form">
                         <label for="name">Nome:</label>
-                        <input type="text" id="name" name="name" value="Teste" disabled><br>
+                        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($dadosUsuario['nome']); ?>" disabled><br>
 
                         <label for="role">Email:</label>
-                        <input type="text" id="role" name="email" value="Teste"  disabled><br>
+                        <input type="text" id="role" name="email" value="<?php echo htmlspecialchars($dadosUsuario['email']); ?>"  disabled><br>
 
                         <label for="role">Telefone:</label>
-                        <input type="text" id="role" name="telefone" value="Teste"  disabled><br>
+                        <input type="text" id="role" name="telefone" value="<?php echo htmlspecialchars($dadosUsuario['telefone']); ?>"  disabled><br>
 
                         <label for="role">Endereço:</label>
-                        <input type="text" id="role" name="endereco" value="Teste"  disabled><br>
+                        <input type="text" id="role" name="endereco" value="<?php echo htmlspecialchars($dadosUsuario['endereco']); ?>"  disabled><br>
 
                         <label for="role">Bairro:</label>
-                        <input type="text" id="role" name="bairro" value="Teste"  disabled><br>
+                        <input type="text" id="role" name="bairro" value="<?php echo htmlspecialchars($dadosUsuario['bairro']); ?>"  disabled><br>
 
                         <label for="role">Cidade:</label>
-                        <input type="text" id="role" name="cidade" value="Teste"  disabled><br>
+                        <input type="text" id="role" name="cidade" value="<?php echo htmlspecialchars($dadosUsuario['cidade']); ?>"  disabled><br>
 
                         <label for="role">Data de Nacimento:</label>
-                        <input type="text" id="role" name="datadenacimento" value="Teste"  disabled><br>
+                        <input type="text" id="role" name="datadenacimento" value="<?php echo htmlspecialchars($dadosUsuario['datadenacimento']); ?>"  disabled><br>
 
                         <label for="role">CEP:</label>
-                        <input type="text" id="role" name="cep" value="Teste"  disabled><br>
+                        <input type="text" id="role" name="cep" value="<?php echo htmlspecialchars($dadosUsuario['cep']); ?>"  disabled><br>
 
                         <label for="role">Cargo:</label>
-                        <input type="text" id="role" name="cargo" value="Teste"  disabled><br>
+                        <input type="text" id="role" name="cargo" value="<?php echo htmlspecialchars($dadosUsuario['cargo']); ?>"  disabled><br>
 
                         <button type="submit">Fechar</button>
                     </form>
@@ -323,31 +336,31 @@
                     <h2 id="edit-modal-title">Editar Informações</h2>
                     <form id="edit-form" class="modal-form"method="post">                  
                         <label for="name">Nome:</label>
-                        <input type="text" id="name" name="name" value="Teste" placeholder="Digite o nome" required><br>
+                        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($dadosUsuario['nome']); ?>" placeholder="Digite o nome" required><br>
 
                         <label for="role">Email:</label>
-                        <input type="text" id="role" name="email" value="Teste" placeholder="Digite o email" required><br>
+                        <input type="text" id="role" name="email" value="<?php echo htmlspecialchars($dadosUsuario['email']); ?>" placeholder="Digite o email" required><br>
 
                         <label for="role">Telefone:</label>
-                        <input type="text" id="role" name="telefone" value="Teste" placeholder="Digite o telefone" required><br>
+                        <input type="text" id="role" name="telefone" value="<?php echo htmlspecialchars($dadosUsuario['telefone']); ?>" placeholder="Digite o telefone" required><br>
 
                         <label for="role">Endereço:</label>
-                        <input type="text" id="role" name="endereco" value="Teste" placeholder="Digite o endereço" required><br>
+                        <input type="text" id="role" name="endereco" value="<?php echo htmlspecialchars($dadosUsuario['endereco']); ?>" placeholder="Digite o endereço" required><br>
 
                         <label for="role">Bairro:</label>
-                        <input type="text" id="role" name="bairro" value="Teste" placeholder="Digite o bairro"  required><br>
+                        <input type="text" id="role" name="bairro" value="<?php echo htmlspecialchars($dadosUsuario['bairro']); ?>" placeholder="Digite o bairro"  required><br>
 
                         <label for="role">Cidade:</label>
-                        <input type="text" id="role" name="cidade" value="Teste" placeholder="Digite a cidade" required><br>
+                        <input type="text" id="role" name="cidade" value="<?php echo htmlspecialchars($dadosUsuario['cidade']); ?>" placeholder="Digite a cidade" required><br>
 
                         <label for="role">Data de Nacimento:</label>
-                        <input type="text" id="role" name="datadenacimento" value="Teste" placeholder="Digite a data de nacimento" required><br>
+                        <input type="text" id="role" name="datadenacimento" value="<?php echo htmlspecialchars($dadosUsuario['datadenacimento']); ?>" placeholder="Digite a data de nacimento" required><br>
 
                         <label for="role">CEP:</label>
-                        <input type="text" id="role" name="cep" value="Teste" placeholder="Digite o cep" required><br>
+                        <input type="text" id="role" name="cep" value="<?php echo htmlspecialchars($dadosUsuario['cep']); ?>" placeholder="Digite o cep" required><br>
 
                         <label for="role">Cargo:</label>
-                        <input type="text" id="role" name="cargo" value="Teste" placeholder="Digite o cargo" required><br>
+                        <input type="text" id="role" name="cargo" value="<?php echo htmlspecialchars($dadosUsuario['cargo']); ?>" placeholder="Digite o cargo" required><br>
 
                         <button type="submit" name="edit-salvar">Salvar</button>
                     </form>
@@ -361,7 +374,7 @@
                         <span class="close-btn" id="closeDeleteModal">&times;</span>
                         <h2>Tem certeza que deseja excluir?</h2>
                         <p id="delete-modal-description">Este processo não pode ser revertido.</p>
-                        <button id="confirmDelete">Sim, excluir</button>
+                        <button type="submit" name="delete-salvar"  id="confirmDelete" >Sim, excluir</button>
                         <button id="cancelDelete">Cancelar</button>
                     </form>
                 </div>
@@ -374,7 +387,7 @@
         <p>&copy; 2024 BuscaObra. Todos os direitos reservados. <p class="version">Versão 1.0</p></p>
     </footer>
 
-    <script src="modal.js"></script>
-    <script src="script.js"></script>
+    <script src="assets/js/modal.js"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>
