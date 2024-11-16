@@ -28,9 +28,12 @@ CREATE TABLE cliente (
     cli_rua VARCHAR(155),
     cli_numero_rua VARCHAR(20),
     cli_cep CHAR(8),
+    imagem VARCHAR(255),
     cli_tipo INT NOT NULL,
     FOREIGN KEY (cli_tipo) REFERENCES usertipo(usertipo_id)
 );
+
+alter table cliente add column cli_telefone char(14);
 
 -- Tabela Categorias (categorias de profissões, ex: Construção, Reparos, etc.)
 CREATE TABLE categorias (
@@ -62,6 +65,7 @@ CREATE TABLE profissionais (
     pro_telefone CHAR(14),
     pro_email varchar(255),
     pro_profissao varchar(255),
+    imagem VARCHAR(255),
     pro_descricao TEXT,
     pro_foto VARCHAR(255),
     plano_id INT,  -- Plano do profissional
@@ -70,6 +74,7 @@ CREATE TABLE profissionais (
     FOREIGN KEY (cli_id) REFERENCES cliente(cli_id) ON DELETE CASCADE,
     FOREIGN KEY (profissao_id) REFERENCES profissoes(profissao_id),
     FOREIGN KEY (plano_id) REFERENCES planos(plano_id)
+
 );
 
 -- Tabela Admins (extensão de cliente para dados específicos de admins)
@@ -99,6 +104,16 @@ CREATE TABLE avaliacoes (
     FOREIGN KEY (cliente_id) REFERENCES cliente(cli_id) ON DELETE CASCADE
 );
 
+-- Tabela Log
+CREATE TABLE log (
+    log_id INT PRIMARY KEY AUTO_INCREMENT,
+    log_usuario VARCHAR(255),
+    log_data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    log_tipo VARCHAR(50),
+    log_descricao TEXT,
+    log_ip VARCHAR(255)
+);
+
 -- Inserindo tipos de usuários
 INSERT INTO usertipo (usertipo_nome) VALUES ('usuario'), ('profissional'), ('moderador'), ('admin');
 
@@ -117,6 +132,97 @@ INSERT INTO planos (nome, prioridade) VALUES
     ('Gratuito', 1),
     ('Premium', 2),
     ('VIP', 3);
+
+-- Procedimento para atualizar a média de avaliação dos profissionais
+
+DELIMITER $$
+
+Drop PROCEDURE IF EXISTS atualizar_avaliacao_media;
+
+PROCEDURE atualizar_avaliacao_media(profissional_id INT)
+BEGIN
+    UPDATE profissionais
+    SET avaliacao_media = (
+        SELECT AVG(nota)
+        FROM avaliacoes
+        WHERE profissional_id = profissional_id
+    )
+    WHERE pro_id = profissional_id;
+END
+
+DELIMITER ;
+
+-- Procedimento para selecionar profissionais
+
+DELIMITER $$
+
+Drop PROCEDURE IF EXISTS selecionar_profissionais;
+
+PROCEDURE selecionar_profissionais()
+BEGIN
+    SELECT pro_id, pro_nome, pro_email, pro_profissao, profissao_nome, pro_telefone, pro_descricao, pro_foto, plano_id, avaliacao_media, localidade
+    FROM profissionais
+    INNER JOIN profissoes ON profissao_id = profissao_id
+    INNER JOIN planos ON plano_id = plano_id;
+END
+
+DELIMITER ;
+
+-- Procedimento para selecionar clientes
+
+DELIMITER $$
+
+Drop PROCEDURE IF EXISTS selecionar_clientes;
+
+PROCEDURE selecionar_clientes()
+BEGIN
+    SELECT cli_id, cli_nome, cli_email, cli_telefone, cli_bairro, cli_rua, cli_numero_rua, cli_cep
+    FROM cliente;
+END
+
+DELIMITER ;
+
+-- Procedimento para selecionar admins
+
+DELIMITER $$
+
+Drop PROCEDURE IF EXISTS selecionar_admins;
+
+PROCEDURE selecionar_admins()
+BEGIN
+    SELECT admin_id, cli_id, admin_departamento, admin_cargo, admin_senha, nivel_acesso, status
+    FROM admins;
+END
+
+DELIMITER ;
+
+-- Deletar profissionais
+
+DELIMITER $$
+
+Drop PROCEDURE IF EXISTS deletar_profissionais;
+
+PROCEDURE deletar_profissionais()
+BEGIN
+    DELETE FROM profissionais;
+END
+
+DELIMITER ;
+
+-- Deletar clientes
+
+DELIMITER $$
+
+Drop PROCEDURE IF EXISTS deletar_clientes;
+
+PROCEDURE deletar_clientes()
+BEGIN
+    DELETE FROM cliente;
+END
+
+DELIMITER ;
+
+
 
 -- SuperAdmin
 INSERT INTO admins (cli_id, admin_departamento, admin_cargo, admin_senha, nivel_acesso, status)

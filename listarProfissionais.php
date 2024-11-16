@@ -4,7 +4,6 @@ require_once "config.php";
 session_start();
 
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-
     $usuario = $_SESSION['usuario'];
     $cli_tipo = $_SESSION['cli_tipo'];
 } else {
@@ -13,12 +12,12 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 }
 
 $pdo = getDatabaseConnection();
-
 $tipo_profissional = isset($_POST['tipo_profissional']) ? $_POST['tipo_profissional'] : '';
 
 $query = "
     SELECT p.pro_id, p.pro_nome, p.pro_email, p.pro_profissao, p.pro_telefone, p.pro_descricao, 
-           IFNULL(AVG(a.nota), 0) AS media_avaliacao  -- Calcula a média das avaliações, assumindo 0 se não houver
+           p.imagem,  -- Adicionando o campo imagem
+           IFNULL(AVG(a.nota), 0) AS media_avaliacao
     FROM profissionais p
     LEFT JOIN avaliacoes a ON p.pro_id = a.profissional_id
 ";
@@ -44,19 +43,15 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo $titulo; ?> - Tela de Login</title>
+  <title>Listagem de Profissionais</title>
+  <link rel="shortcut icon" href="imagesfavicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/listarProfissionais.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-4">
         <h2 class="mb-4">Consultar Profissionais</h2>
         
-        <!-- Formulário para selecionar o tipo de profissional -->
         <form method="POST" class="mb-4">
             <div class="form-group">
                 <label for="tipo_profissional">Escolha o tipo de profissional</label>
@@ -76,6 +71,12 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($profissionais as $profissional): ?>
                     <div class="col-md-4">
                         <div class="card mb-4">
+                            <?php if (!empty($profissional['imagem'])): ?>
+                                <img src="img/<?php echo htmlspecialchars($profissional['imagem']); ?>" class="card-img-top" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
+                            <?php else: ?>    
+                                <img src="images/userphoto/default-avatar.png" class="card-img-top" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
+                            <?php endif; ?>
+                                
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo htmlspecialchars($profissional['pro_nome']); ?></h5>
                                 <p class="card-text">

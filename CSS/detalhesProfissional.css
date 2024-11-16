@@ -20,6 +20,15 @@ body {
     margin-top: 50px;
 }
 
+/* Classe para a imagem do profissional */
+.img-profissional {
+    width: 150px;
+    height: 150px;
+    object-fit: cover; /* Para manter o aspecto da imagem */
+    border-radius: 50%; /* Opcional, para deixar a imagem redonda */
+}
+
+
 /* Estilo do título */
 h2 {
     font-size: 2rem;

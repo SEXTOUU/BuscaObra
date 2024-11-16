@@ -514,15 +514,6 @@ p {
     color: #d1d1d1;
 }
 
-.card img {
-    width: 100%;
-    height: auto;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-
 /* Estilo de cada coluna do rodapé */
 .footer-container {
     display: flex;
@@ -583,4 +574,16 @@ p {
 
 .footer a:hover {
     color: #d1d1d1;
+}
+
+.card-img-top {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    display: block;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: 0.3 s;
 }

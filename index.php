@@ -5,12 +5,17 @@ session_start();
 
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
+    $cli_id = $_SESSION['cli_id'];
     $usuario = $_SESSION['usuario'];
     $cli_tipo = $_SESSION['cli_tipo'];
+
+    $imagemPerfil = obterImagemPerfil($cli_id);
 } else {
     $usuario = null;
     $cliTipo = null;
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -56,11 +61,20 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
             <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
                 <div class="profile-menu">
                     <div class="profile-icon">
-                        <img src="images/user-profile.jpeg" alt="Foto do usuário">
+                    <?php if ($imagemPerfil): ?>
+                        <img src="img/<?php echo htmlspecialchars($imagemPerfil); ?>" alt="Foto do usuário">
+                    <?php else: ?>
+                        <img src="images/userphoto/default-avatar.png" alt="Foto do usuário">
+                    <?php endif; ?>
                         <div class="notification-dot"></div> <!-- Indicador de notificação -->
                     </div>
                     <div class="profile-dropdown">
-                        <img src="images/user-profile.jpeg" alt="Foto do usuário">
+
+                    <?php if ($imagemPerfil): ?>
+                        <img src="img/<?php echo htmlspecialchars($imagemPerfil); ?>" alt="Foto do usuário">
+                    <?php else: ?>
+                        <img src="images/userphoto/default-avatar.png" alt="Foto do usuário">
+                    <?php endif; ?>
                         <p class="welcome-message">Bem-vindo(a) de volta!</p>
                         <p>Olá, <?php echo htmlspecialchars($usuario); ?></p>
                         <hr>
@@ -189,8 +203,9 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                             $profissionais = $result->fetchAll(PDO::FETCH_ASSOC);
 
                             foreach ($profissionais as $profissional) {
+                                $imagem = isset($profissional['imagem']) && file_exists("img/" . $profissional['imagem']) ? $profissional['imagem'] : 'default-avatar.png';
                                 echo '<div class="card">';
-                                echo '<img src="' . $profissional['pro_foto'] . '" alt="Foto do Profissional">';
+                                echo '<img class="card-img-top" src="img/' . $imagem . '" alt="Foto do Profissional">';
                                 echo '<h3>' . $profissional['pro_nome'] . '</h3>';
                                 echo '<p>Profissão: ' . $profissional['pro_profissao'] . '</p>';
                                 echo '<p>Avaliação: ' . $profissional['avaliacao_media'] . '</p>';

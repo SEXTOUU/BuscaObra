@@ -10,8 +10,15 @@ if (isset($_POST['cadastrar'])) {
     $senha = $_POST['senha'];
     $senhahash = password_hash($senha, PASSWORD_DEFAULT);
     $telefone_limpo = preg_replace('/\D/', '', $telefone);
+    
+    if (isset($_FILES["Imagem"]) && !empty($_FILES["Imagem"]["name"])) {
+        $imagem = "./img/" . $_FILES["Imagem"]["name"];
+        move_uploaded_file($_FILES["Imagem"]["tmp_name"], $imagem);
+    } else {
+        $imagem = "";
+    }
 
-    // Define o tipo de usuário como "profissional" (2) 
+    // Define o tipo de usuário como "profissional" (2)
     $tipoUsuario = 2;
 
     // Conexão com o banco
@@ -33,31 +40,45 @@ if (isset($_POST['cadastrar'])) {
 
             if ($checkTipoStmt->rowCount() > 0) {
                 // Inserção na tabela cliente
-                $stmt = $pdo->prepare("INSERT INTO cliente (cli_nome, cli_email, cli_senha, cli_tipo) VALUES (:nome, :email, :senha, :tipo)");
+                $stmt = $pdo->prepare("INSERT INTO cliente (cli_nome, cli_email, cli_senha, cli_tipo, imagem) VALUES (:nome, :email, :senha, :tipo, :imagem)");
                 $stmt->bindParam(':nome', $nome);
                 $stmt->bindParam(':email', $email);
                 $stmt->bindParam(':senha', $senhahash);
                 $stmt->bindParam(':tipo', $tipoUsuario);
-
+                $stmt->bindParam(':imagem', $imagem);
+                
                 if ($stmt->execute()) {
                     $clienteId = $pdo->lastInsertId();
 
-                    // Inserção na tabela profissionais, incluindo o nome, email, profissão, telefone e descrição
-                    $stmtFuncionario = $pdo->prepare("INSERT INTO profissionais (cli_id, pro_nome, pro_email, profissao_id, pro_profissao, pro_telefone, pro_descricao) VALUES (:cli_id, :nome, :email, (SELECT profissao_id FROM profissoes WHERE nome = :profissao), :pro_profissao, :telefone, :descricao)");
-                    $stmtFuncionario->bindParam(':cli_id', $clienteId);
-                    $stmtFuncionario->bindParam(':nome', $nome);
-                    $stmtFuncionario->bindParam(':email', $email);
-                    $stmtFuncionario->bindParam(':profissao', $profissao);
-                    $stmtFuncionario->bindParam(':pro_profissao', $profissao);
-                    $stmtFuncionario->bindParam(':telefone', $telefone_limpo);
-                    $stmtFuncionario->bindParam(':descricao', $descricao);
+                    // Obter o ID da profissão
+                    $profissaoStmt = $pdo->prepare("SELECT profissao_id FROM profissoes WHERE nome = :profissao");
+                    $profissaoStmt->bindParam(':profissao', $profissao);
+                    $profissaoStmt->execute();
+                    $profissaoData = $profissaoStmt->fetch(PDO::FETCH_ASSOC);
 
-                    if ($stmtFuncionario->execute()) {
-                        echo "<script>alert('Cadastrado com sucesso!');</script>";
-                        header("Location: index.php"); // Redireciona para a página de login
-                        exit;
+                    if ($profissaoData) {
+                        $profissaoId = $profissaoData['profissao_id'];
+
+                        // Inserção na tabela profissionais
+                        $stmtFuncionario = $pdo->prepare("INSERT INTO profissionais (cli_id, pro_nome, pro_email, profissao_id, pro_profissao, pro_telefone, pro_descricao, imagem) VALUES (:cli_id, :nome, :email, :profissao_id, :pro_profissao, :telefone, :descricao, :imagem)");
+                        $stmtFuncionario->bindParam(':cli_id', $clienteId);
+                        $stmtFuncionario->bindParam(':nome', $nome);
+                        $stmtFuncionario->bindParam(':email', $email);
+                        $stmtFuncionario->bindParam(':profissao_id', $profissaoId);
+                        $stmtFuncionario->bindParam(':pro_profissao', $profissao);
+                        $stmtFuncionario->bindParam(':telefone', $telefone_limpo);
+                        $stmtFuncionario->bindParam(':descricao', $descricao);
+                        $stmtFuncionario->bindParam(':imagem', $imagem);
+
+                        if ($stmtFuncionario->execute()) {
+                            echo "<script>alert('Cadastrado com sucesso!');</script>";
+                            header("Location: index.php");
+                            exit;
+                        } else {
+                            echo "<script>alert('Erro ao cadastrar profissional.');</script>";
+                        }
                     } else {
-                        echo "<script>alert('Erro ao cadastrar profissional.');</script>";
+                        echo "<script>alert('Profissão inválida.');</script>";
                     }
                 } else {
                     echo "<script>alert('Erro ao cadastrar cliente.');</script>";
@@ -72,6 +93,7 @@ if (isset($_POST['cadastrar'])) {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -84,9 +106,8 @@ if (isset($_POST['cadastrar'])) {
 </head>
 <body>
     <div class="container">
-        <img src="images/homem-jovem-construtor-afro-americano-usando-colete-de-construcao-e-capacete-de-seguranca-em-pe-com-os-bracos-cruzados-segurando-uma-espatula-parecendo-confiante_141793-19066.avif" class="img-fluid mb-4" alt="Imagem de Funcionário">
         <h2>Cadastro do Profissional</h2>
-        <form id="funcionario-form" method="POST">
+        <form id="funcionario-form" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <input type="text" name="nome" class="form-control" placeholder="Nome Completo" required>
             </div>
@@ -107,6 +128,10 @@ if (isset($_POST['cadastrar'])) {
                     <option value="Eletricista">Eletricista</option>
                     <option value="Pintor">Pintor</option>
                 </select>
+            </div>
+            <div class="form-group">
+                <label>imagem</label>
+                <input type="file" name="Imagem" class="form-control" accept="image/*">
             </div>
             <!-- Novo campo para descrição -->
             <div class="form-group">

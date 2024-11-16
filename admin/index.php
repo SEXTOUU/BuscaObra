@@ -28,6 +28,9 @@ if ($admin['nivel_acesso'] < 2) {
     exit;
 }
 
+if (isset($_POST['logout'])) {
+    logout();
+}
 
 ?>
 <!DOCTYPE html>
@@ -40,6 +43,7 @@ if ($admin['nivel_acesso'] < 2) {
     <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dashboard2.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -53,117 +57,9 @@ if ($admin['nivel_acesso'] < 2) {
     <div class="container">
         <!-- Barra Lateral -->
         <nav class="sidebar" id="sidebar">
-            <div class="logo">
-                <img src="assets/images/user.jpeg" alt="Logo">
-                <h2>BuscaObra</h2>
-            </div>
+           
+            <?php include 'includes/sidebar.php'; ?>
 
-            <ul>
-                <span class="title-menu">MENU</span>
-
-                <li><a href="index.php" class="sidebaractive"><i
-                            class="fas fa-tachometer-alt"></i>
-                        Dashboard</a></li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-chart-line"></i> Relatórios <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Relatório de Usuários</a>
-                        <a href="#">Relatório de Avaliações</a>
-                        <a href="#">Relatório Financeiro</a>
-                    </div>
-                </li>
-
-                <span class="title-menu">CONFIGURAÇÕES</span>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-users"></i> Profissionais <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Lista de Profissionais</a>
-                        <a href="#">Cadastro de Profissionais</a>
-                        <a href="#">Gerenciar Destaques</a>
-                        <a href="#">Solicitações de Destaque</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-user"></i> Clientes <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="listacliente.php">Lista de Clientes</a>
-                        <a href="#">Favoritos e Avaliações</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-user-shield"></i> Usuários e
-                        Permissões <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Gerenciamento de Administradores</a>
-                        <a href="#">Permissões de Acesso</a>
-                    </div>
-                </li>
-
-                <span class="title-menu">GERENCIAMENTO</span>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-star"></i> Planos e Assinaturas
-                        <i class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Gerenciamento de Planos</a>
-                        <a href="#">Status das Assinaturas</a>
-                        <a href="#">Relatório de Assinaturas</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-filter"></i> Busca e Filtros <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Configurar Filtros</a>
-                        <a href="#">Gerenciar Categorias</a>
-                        <a href="#">Configurações de Recomendações</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#">
-                        <i class="fas fa-comments"></i> 
-                        Mensagens e Suporte <span class="badge">4</span>
-                        <i class="fas fa-chevron-down dropdown-icon"></i> 
-                    </a>
-                    <div class="dropdown-content">
-                        <a href="#">Central de Mensagens</a>
-                        <a href="#">Suporte ao Cliente</a>
-                        <a href="#">Suporte ao Profissional</a>
-                        <a href="#">FAQ e Tutoriais</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-thumbs-up"></i> Avaliações e
-                        Feedbacks <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Moderação de Avaliações</a>
-                        <a href="#">Respostas de Profissionais</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-cog"></i> Configurações <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Configurações Gerais</a>
-                        <a href="#">Configurações de Notificações</a>
-                        <a href="#">Configurações de Segurança</a>
-                        <a href="#">Configurações de Pagamento</a>
-                    </div>
-                </li>
-            </ul>
         </nav>
 
         <!-- Botão de Toggle para a barra lateral em dispositivos menores -->
@@ -174,60 +70,12 @@ if ($admin['nivel_acesso'] < 2) {
         <!-- Conteúdo Principal -->
         <main class="main-content">
             <!-- Cabeçalho -->
-            <header>
-                <div class="search-bar">
-                    <input type="text" class="search-input" placeholder="Buscar...">
-                    <button type="submit" name="search" class="search-button"><i class="fas fa-search"></i></button>
-                </div>
 
-                <div class="notification-banner">
-                    <span class="notification-text">Você Tem <strong> 21 </strong>
-                         Notificações</span>
-                    <div class="notification-icon">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-dot"></span>
-                        
-                        <!-- Indica a contagem de notificações -->
-                        <div class="notification-dropdown">
-                            <ul>
-                                <li class="notification-item">
-                                    <i class="fas fa-check-circle notification-icon"></i>
-                                    Notificação 1</li>
-                                <li class="notification-item unread">
-                                    <i class="fas fa-exclamation-circle notification-icon"></i>
-                                    Notificação 2</li>
-                                <li class="notification-item">
-                                    <i class="fas fa-info-circle notification-icon"></i>
-                                    Notificação 3</li>
-                            </ul>
-                            <div class="view-more">Ver mais</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Informações do Usuário no Cabeçalho -->
-                <div class="user-info">
-                    <img src="assets/images/user.jpeg" alt="User">
-                    <span><?php echo $usuario; ?></span>
-                    <i class="fas fa-caret-down"></i>
-                    <div class="user-dropdown">
-                        <ul>
-                            <li href="#"><i class="fa-solid fa-user"></i> Perfil</li>
-                            <li href="#"><i class="fas fa-star"></i> Planos e Assinaturas</li>
-                            <hr>
-                            <li href="#"><i class="fas fa-cog"></i> Configurações</li>
-                            <li href="#"><i class="fas fa-question"></i> Ajuda</li>
-                            <li href=""><i class="fa-solid fa-right-to-bracket"></i> Sair</li>
-                        </ul>
-                    </div>
-                </div>
-            </header>
+            <?php include 'includes/header.php'; ?>
 
             <div class="content">
                 <h2>Painel de Controle</h2>
             </div>
-
-            <!-- Paginação Inicio -->
 
             <!-- Cartões do Dashboard -->
             <div class="dashboard-cards">
@@ -258,7 +106,7 @@ if ($admin['nivel_acesso'] < 2) {
                         <i class="fas fa-arrow-down trend-icon"></i>
                     </div>
                     <h3>0</h3>
-                    <p>Teste</p>
+                    <p>Avaliações</p>
                     <div class="progress-bar">
                         <div class="progress" style="width: 60%;"></div>
                     </div>
@@ -268,8 +116,8 @@ if ($admin['nivel_acesso'] < 2) {
                     <div class="icon-container">
                         <i class="fas fa-cube" style="color: black;"></i>
                     </div>
-                    <h3>3500</h3>
-                    <p>Orders</p>
+                    <h3>0</h3>
+                    <p>Plano</p>
                     <div class="progress-bar">
                         <div class="progress" style="width: 60%;"></div>
                     </div>
@@ -329,7 +177,7 @@ if ($admin['nivel_acesso'] < 2) {
                 <div class="card">
                 
                     <table class="data-table">
-                        <caption class="data-table-caption">Tabela de Dados</caption>
+                        <caption class="data-table-caption">Tabela de Clientes</caption>
                         <thead class="data-table-header">
                             <tr class="data-table-row">
                                 <th>ID</th>
@@ -410,7 +258,8 @@ if ($admin['nivel_acesso'] < 2) {
     <footer class="footer">
         <p>&copy; 2024 BuscaObra. Todos os direitos reservados. <p class="version">Versão 1.0</p></p>
     </footer>
-
+    
     <script src="assets/js/script.js"></script>
+    <?php include 'includes/scripts.php'; ?>
 </body>
 </html>

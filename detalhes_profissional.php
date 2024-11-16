@@ -25,7 +25,7 @@ if (!$profissional_id) {
 
 // Consulta para pegar as informações do profissional
 $query_profissional = "
-    SELECT p.pro_id, p.pro_nome, p.pro_email, p.pro_profissao, p.pro_telefone, p.pro_descricao
+    SELECT p.pro_id, p.pro_nome, p.pro_email, p.pro_profissao, p.pro_telefone, p.pro_descricao, p.imagem  -- Incluindo o campo imagem
     FROM profissionais p
     WHERE p.pro_id = :profissional_id
 ";
@@ -39,7 +39,7 @@ if (!$profissional) {
     die("Profissional não encontrado.");
 }
 
-// Consultar as avaliações existentes do profissional
+// Consulta para pegar as avaliações do profissional
 $query_avaliacoes = "
     SELECT a.nota, a.comentario, a.data_avaliacao, c.cli_nome
     FROM avaliacoes a
@@ -59,14 +59,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $comentario = isset($_POST['comentario']) ? $_POST['comentario'] : null;
 
     if ($nota && $comentario) {
-        // Pega o ID do cliente logado
         if (isset($_SESSION['cli_id'])) {
             $cliente_id = $_SESSION['cli_id'];
         } else {
             die("Erro: Cliente não encontrado. Você precisa estar logado para avaliar.");
         }
 
-        // Inserir a nova avaliação no banco
         $query_insert = "
             INSERT INTO avaliacoes (profissional_id, cliente_id, nota, comentario)
             VALUES (:profissional_id, :cliente_id, :nota, :comentario)
@@ -79,7 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_insert->bindParam(':comentario', $comentario, PDO::PARAM_STR);
         $stmt_insert->execute();
 
-        // Redireciona para evitar reenvio do formulário
         header("Location: detalhes_profissional.php?id=$profissional_id");
         exit();
     }
@@ -92,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Profissional</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/detalhesProfissional.css">
 </head>
@@ -100,19 +98,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h2>Detalhes do Profissional</h2>
         <div class="card">
             <div class="card-body">
+               <!-- Exibindo a imagem do profissional com uma classe específica -->
+                <?php if (!empty($profissional['imagem'])): ?>
+                        <img src="img/<?php echo htmlspecialchars($profissional['imagem']); ?>" class="card-img-top mb-3 img-profissional" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
+                <?php else: ?>
+                    <img src="images/userphoto/default-avatar.png" class="card-img-top mb-3 img-profissional" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
+                <?php endif; ?>
+
+                
                 <h5 class="card-title"><?php echo htmlspecialchars($profissional['pro_nome']); ?></h5>
                 <p><strong>Profissão:</strong> <?php echo htmlspecialchars($profissional['pro_profissao']); ?></p>
                 <p><strong>E-mail:</strong> <?php echo htmlspecialchars($profissional['pro_email']); ?></p>
                 <p><strong>Telefone:</strong> <?php echo htmlspecialchars($profissional['pro_telefone']); ?></p>
                 <p><strong>Descrição:</strong> <?php echo nl2br(htmlspecialchars($profissional['pro_descricao'])); ?></p>
-                
-                <!-- Mensagem explicativa -->
+
                 <p class="text-muted">Clique em um dos botões abaixo para entrar em contato com o profissional.</p>
                 
-                <!-- Botão Contatar com link para Gmail -->
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=<?php echo urlencode($profissional['pro_email']); ?>" target="_blank" class="btn btn-primary mt-3">Contatar via Gmail</a>
-
-                <!-- Botão Contatar com link para WhatsApp -->
                 <a href="https://api.whatsapp.com/send?phone=<?php echo urlencode($profissional['pro_telefone']); ?>" target="_blank" class="btn btn-success mt-3">Contatar via WhatsApp</a>
             </div>
         </div>
@@ -153,5 +155,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <button type="submit" class="btn btn-primary">Enviar Avaliação</button>
         </form>
     </div>
+    
 </body>
 </html>

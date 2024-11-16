@@ -24,6 +24,7 @@ function logout() {
     session_unset();
     session_destroy();
     redirect("index.php");
+    die();
 }
 
 
@@ -192,17 +193,52 @@ function setAlert($type) {
     $_SESSION['alerts'][] = ['message' => $message, 'type' => $alertType];
 }
 
+
 function displayAlerts() {
     if (!empty($_SESSION['alerts'])) {
         foreach ($_SESSION['alerts'] as $alert) {
-            echo "<div class='alert {$alert['type']}'>
-                    {$alert['message']}
-                    <span class='close-btn' onclick='this.parentElement.style.display=\"none\";'>&times;</span>
-                  </div>";
+            // Gerar SweetAlert usando a mensagem e o tipo do alerta
+            echo "<script>
+                    Swal.fire({
+                        icon: '{$alert['type']}',
+                        title: 'Alerta',
+                        text: '{$alert['message']}',
+                        showConfirmButton: true,
+                        timer: 5000 // Tempo até desaparecer (opcional)
+                    });
+                  </script>";
         }
         unset($_SESSION['alerts']); // Limpa os alertas após a exibição
     }
 }
+
+
+// Função para obter a imagem de perfil do usuário
+function obterImagemPerfil($cli_id) {
+    try {
+        // Conectar ao banco de dados
+        $pdo = getDatabaseConnection();
+
+        // Consulta para obter a imagem do usuário logado
+        $sql = "SELECT p.imagem 
+                FROM cliente c
+                JOIN profissionais p ON c.cli_id = p.cli_id
+                WHERE c.cli_id = ?";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$cli_id]);
+        $dadosUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Verifica se a imagem foi encontrada, caso contrário retorna null
+        return isset($dadosUsuario['imagem']) ? $dadosUsuario['imagem'] : null;
+
+    } catch (PDOException $e) {
+        // Em caso de erro, exibe uma mensagem
+        echo "Erro ao buscar imagem de perfil: " . $e->getMessage();
+        return null;
+    }
+}
+
 
 
 ?>

@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "express": "^4.21.1",
-    "mercadopago": "^2.0.15"
+    "mercadopago": "^2.0.15",
+    "tela-pagamento": "file:"
   }
 }

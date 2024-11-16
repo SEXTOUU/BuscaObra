@@ -15,12 +15,8 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-unset($_SESSION['logged_in']);
-unset($_SESSION['usuario']);
-unset($_SESSION['cli_id']);
-unset($_SESSION['cli_tipo']);
+redirect("index.php");
 
-redirect("index.php"); 
 exit;
 
 ?>

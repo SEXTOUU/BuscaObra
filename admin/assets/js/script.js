@@ -42,11 +42,6 @@ document.querySelectorAll('.sidebar .dropdown > a').forEach(link => {
     });
 });
 
-// Logout function placeholder
-function logout() {
-    alert('Você foi desconectado!');
-}
-
 // Criando o gráfico padrão com dados fictícios
 const ctx = document.getElementById('performanceChart').getContext('2d');
 
