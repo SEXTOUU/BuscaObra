@@ -13,10 +13,10 @@ $planos = [
             'Anúncios Promovidos'
         ]
     ]/*,
-    'basico' => [
-        'nome' => 'Plano Básico',
-        'valor' => 10.00,
-        'descricao' => 'Plano inicial com recursos limitados.',
+    'vip' => [
+        'nome' => 'Plano Vip',
+        'valor' => 59.99,
+        'descricao' => 'Plano vip com muito mais recursos.',
         'beneficios' => [
             'Visibilidade básica no site',
             'Acesso a funcionalidades essenciais'
@@ -43,6 +43,10 @@ $planos = [
         <div class="plans">
             <?php foreach ($planos as $key => $plano): ?>
                 <div class="plan <?php echo $key; ?>" id="<?php echo $key; ?>Plan">
+                    <!-- Fita de destaque -->
+                    <?php if ($key == 'premium'): ?>
+                        <div class="badge">Destaque</div>
+                    <?php endif; ?>
                     <h2><?php echo $plano['nome']; ?></h2>
                     <div class="price">R$ <?php echo number_format($plano['valor'], 2, ',', '.'); ?>/mês</div>
                     <p><?php echo $plano['descricao']; ?></p>

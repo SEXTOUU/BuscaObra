@@ -205,3 +205,47 @@ button:hover {
 .footer a:hover {
     color: #686868;
 }
+
+/* Estilo da fita de destaque */
+.badge {
+    position: absolute; /* Posiciona a fita de forma fixa em relação ao plano */
+    top: 25px;
+    right: -25px;
+    background-color: #dc3545; /* Cor vermelha */
+    color: white;
+    font-weight: bold;
+    padding: 10px 30px;
+    border-radius: 5px 0 0 5px; /* Bordas arredondadas no topo esquerdo e inferior direito */
+    font-size: 1.2rem;
+    transform: rotate(45deg); /* Rotaciona a fita para o estilo clássico */
+    z-index: 10; /* Garante que a fita fique acima do plano */
+    
+}
+
+/* Estilo para os planos, com posição relativa para garantir que a fita seja posicionada corretamente */
+.plan {
+    position: relative; /* Necessário para que o badge seja posicionado corretamente */
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    width: 50%;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+    margin-top: 20px; /* Dá um pequeno espaçamento entre os planos */
+}
+
+.plan:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Plano com a fita de destaque */
+.plan.premium {
+    border: 1px solid #28a745; /* Borda verde para o plano premium */
+    background: #f8f9fa; /* Fundo claro */
+}
+
+.plan.premium .price {
+    color: #dc3545; /* Cor vermelha para o preço no plano premium */
+}

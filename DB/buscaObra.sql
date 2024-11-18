@@ -12,6 +12,8 @@ DROP TABLE IF EXISTS categorias;
 DROP TABLE IF EXISTS planos;
 DROP TABLE IF EXISTS logs;
 DROP TABLE IF EXISTS notificacoes;
+DROP TABLE IF EXISTS assinaturas;
+
 
 -- Tabela Usertipo (define tipos de usuário)
 CREATE TABLE usertipo (
@@ -55,6 +57,7 @@ CREATE TABLE profissoes (
 CREATE TABLE planos (
     plano_id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(50) NOT NULL UNIQUE,
+    valor DECIMAL(10, 2) NOT NULL,
     prioridade INT DEFAULT 0 CHECK (prioridade >= 0)  -- Define a prioridade do plano
 );
 
@@ -157,10 +160,10 @@ INSERT INTO profissoes (nome, categoria_id) VALUES
     ('Pintor', 2);
 
 -- Inserindo dados de exemplo para planos
-INSERT INTO planos (nome, prioridade) VALUES 
-    ('Gratuito', 1),
-    ('Premium', 2),
-    ('VIP', 3);
+INSERT INTO planos (nome, valor, prioridade) VALUES 
+    ('Gratuito', 0.00, 1),
+    ('Premium', 25.00, 2),
+    ('VIP', 59.99,3);
 
 -- Procedimento para atualizar a média de avaliação dos profissionais
 
