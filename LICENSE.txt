@@ -1,0 +1,16 @@
+Licença de Uso do Projeto BuscaObra
+
+Copyright (c) 2024 TDaniloJ
+
+1. **Uso Pessoal**: O código-fonte e os recursos do projeto BuscaObra são fornecidos **somente para uso acadêmico e pessoal**. O uso comercial é estritamente proibido sem a permissão expressa do autor.
+
+2. **Propriedade do Código**: O código-fonte, documentação e todos os materiais relacionados são propriedade exclusiva do autor. Qualquer uso, modificação ou distribuição do código-fonte sem permissão está proibido.
+
+3. **Modificação**: O código pode ser modificado para fins acadêmicos ou pessoais, **desde que não seja redistribuído** sem a permissão expressa do autor.
+
+4. **Distribuição**: Não é permitida a redistribuição pública ou privada do código-fonte, total ou parcialmente, sem a permissão expressa do autor. Qualquer redistribuição violando esta licença pode resultar em ações legais.
+
+5. **Isenção de Responsabilidade**: O código é fornecido "como está", sem garantias de qualquer tipo, expressas ou implícitas, incluindo, mas não se limitando a, garantias de adequação a um fim específico. O autor não será responsável por quaisquer danos diretos ou indiretos resultantes do uso do código.
+
+6. **Autorização**: Qualquer uso comercial, redistribuição ou modificação para fins não acadêmicos **requer autorização prévia** por escrito do autor.
+
