@@ -57,6 +57,32 @@ select:focus {
   position: relative;
 }
 
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  transition: transform 0.3s ease;
+}
+
+.form-check:hover {
+  transform: scale(1.02);
+}
+
+.form-check input[type="checkbox"] {
+  margin-right: 10px;
+  cursor: pointer;
+  transform: scale(1.2);
+  padding: 10px;
+  border: 2px solid #FFD700; /* Amarelo */
+  border-radius: 5px;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  margin-bottom: 15px;
+}
+
+.form-check label {
+  font-size: 1.1rem;
+}
+
 /* Estilo do botão */
 .btn-primary {
   background-color: #FFD700; /* Amarelo */

@@ -1,0 +1,95 @@
+/* Estilo geral */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(rgba(34, 34, 34, 0.6), rgba(34, 34, 34, 0.6)),
+    url(../images/Quais-os-tipos-de-obras-existentes-no-condominio.png) no-repeat center center fixed;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container principal */
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Cabeçalho */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.header h1 {
+    font-size: 2.5em;
+    color: #333;
+}
+
+.header p {
+    font-size: 1.2em;
+    color: #666;
+}
+
+/* Detalhes de pagamento */
+.payment-details {
+    text-align: center;
+}
+
+.payment-details h2 {
+    font-size: 2em;
+    color: #008000;
+}
+
+.payment-details p {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: #333;
+}
+
+.payment-details ul {
+    list-style: none;
+    padding: 0;
+}
+
+.payment-details ul li {
+    font-size: 1.1em;
+    margin: 10px 0;
+    color: #333;
+}
+
+.payment-details .payment-button {
+    margin-top: 30px;
+}
+
+/* Botão de pagamento */
+.btn-pay {
+    padding: 12px 30px;
+    background-color: #008000;
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 50px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.btn-pay:hover {
+    background-color: #006400;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #777;
+}
+
+.footer a {
+    color: #008000;
+    text-decoration: none;
+}

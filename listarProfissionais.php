@@ -43,8 +43,8 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Listagem de Profissionais</title>
-  <link rel="shortcut icon" href="imagesfavicon.ico" type="image/x-icon">
+  <title><?php echo $titulo; ?> - Listagem de Profissionais</title>
+  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/listarProfissionais.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
@@ -71,11 +71,14 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($profissionais as $profissional): ?>
                     <div class="col-md-4">
                         <div class="card mb-4">
-                            <?php if (!empty($profissional['imagem'])): ?>
-                                <img src="img/<?php echo htmlspecialchars($profissional['imagem']); ?>" class="card-img-top" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
-                            <?php else: ?>    
-                                <img src="images/userphoto/default-avatar.png" class="card-img-top" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
-                            <?php endif; ?>
+                            <div class="card-header">
+                                <?php if (!empty($profissional['imagem'])): ?>
+                                    <img class="card-img-top" src="<?php echo htmlspecialchars($profissional['imagem']); ?>" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
+                                <?php else: ?>    
+                                    <img src="images/userphoto/default-avatar.png" class="card-img-top" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
+                                <?php endif; ?>
+                            </div>
+
                                 
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo htmlspecialchars($profissional['pro_nome']); ?></h5>

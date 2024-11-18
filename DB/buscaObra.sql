@@ -10,6 +10,8 @@ DROP TABLE IF EXISTS usertipo;
 DROP TABLE IF EXISTS profissoes;
 DROP TABLE IF EXISTS categorias;
 DROP TABLE IF EXISTS planos;
+DROP TABLE IF EXISTS logs;
+DROP TABLE IF EXISTS notificacoes;
 
 -- Tabela Usertipo (define tipos de usuário)
 CREATE TABLE usertipo (
@@ -105,14 +107,41 @@ CREATE TABLE avaliacoes (
 );
 
 -- Tabela Log
-CREATE TABLE log (
+CREATE TABLE logs (
     log_id INT PRIMARY KEY AUTO_INCREMENT,
-    log_usuario VARCHAR(255),
-    log_data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    log_tipo VARCHAR(50),
-    log_descricao TEXT,
-    log_ip VARCHAR(255)
+    usuario_id INT, -- Referência ao ID do usuário que realizou a ação
+    tabela_alterada VARCHAR(100),
+    tipo_operacao VARCHAR(50), -- Ex.: INSERT, UPDATE, DELETE
+    descricao TEXT, -- Detalhes da operação
+    data_operacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ip_usuario VARCHAR(45) -- IP do usuário, se aplicável
 );
+
+CREATE TABLE notificacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL, 
+    mensagem TEXT NOT NULL,
+    tipo ENUM('info', 'alert', 'success') DEFAULT 'info',
+    lida BOOLEAN DEFAULT FALSE,
+    visivel BOOLEAN DEFAULT TRUE,  -- Determina se a notificação é visível
+    descartada BOOLEAN DEFAULT FALSE,  -- Indica se a notificação foi descartada
+    origem_id INT,  -- ID de onde a notificação veio (ex: de um profissional)
+    origem_tipo ENUM('profissional', 'avaliacao', 'sistema') DEFAULT 'sistema',  -- Tipo da origem
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES cliente(cli_id)
+);
+
+-- Tabela Assinaturas (associa clientes aos planos)
+CREATE TABLE assinaturas (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,           -- ID do usuário (cliente)
+    plano_id INT NOT NULL,          -- ID do plano (Premium, Gratuito)
+    status VARCHAR(50) DEFAULT 'ativo', -- Status da assinatura (ativo, cancelado, etc.)
+    data_assinatura TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data da assinatura
+    FOREIGN KEY (user_id) REFERENCES cliente(cli_id),
+    FOREIGN KEY (plano_id) REFERENCES planos(plano_id)
+);
+
 
 -- Inserindo tipos de usuários
 INSERT INTO usertipo (usertipo_nome) VALUES ('usuario'), ('profissional'), ('moderador'), ('admin');
@@ -137,89 +166,132 @@ INSERT INTO planos (nome, prioridade) VALUES
 
 DELIMITER $$
 
-Drop PROCEDURE IF EXISTS atualizar_avaliacao_media;
-
-PROCEDURE atualizar_avaliacao_media(profissional_id INT)
+CREATE TRIGGER atualiza_avaliacao_media_insert
+AFTER INSERT ON avaliacoes
+FOR EACH ROW
 BEGIN
     UPDATE profissionais
     SET avaliacao_media = (
-        SELECT AVG(nota)
-        FROM avaliacoes
-        WHERE profissional_id = profissional_id
+        SELECT AVG(a.nota)
+        FROM avaliacoes a
+        WHERE a.profissional_id = NEW.profissional_id
     )
-    WHERE pro_id = profissional_id;
-END
+    WHERE pro_id = NEW.profissional_id;
+END $$
 
 DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER atualiza_avaliacao_media_update
+AFTER UPDATE ON avaliacoes
+FOR EACH ROW
+BEGIN
+    UPDATE profissionais
+    SET avaliacao_media = (
+        SELECT AVG(a.nota)
+        FROM avaliacoes a
+        WHERE a.profissional_id = NEW.profissional_id
+    )
+    WHERE pro_id = NEW.profissional_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER atualiza_avaliacao_media_delete
+AFTER DELETE ON avaliacoes
+FOR EACH ROW
+BEGIN
+    UPDATE profissionais
+    SET avaliacao_media = (
+        SELECT AVG(a.nota)
+        FROM avaliacoes a
+        WHERE a.profissional_id = OLD.profissional_id
+    )
+    WHERE pro_id = OLD.profissional_id;
+END $$
+
+DELIMITER ;
+
+
 
 -- Procedimento para selecionar profissionais
 
 DELIMITER $$
-
-Drop PROCEDURE IF EXISTS selecionar_profissionais;
-
-PROCEDURE selecionar_profissionais()
+DROP PROCEDURE IF EXISTS selecionar_profissionais;
+CREATE PROCEDURE selecionar_profissionais()
 BEGIN
-    SELECT pro_id, pro_nome, pro_email, pro_profissao, profissao_nome, pro_telefone, pro_descricao, pro_foto, plano_id, avaliacao_media, localidade
-    FROM profissionais
-    INNER JOIN profissoes ON profissao_id = profissao_id
-    INNER JOIN planos ON plano_id = plano_id;
-END
-
+    SELECT 
+        p.pro_id,
+        p.pro_nome,
+        p.pro_email,
+        pf.nome AS profissao,
+        p.pro_telefone,
+        p.pro_descricao,
+        p.pro_foto,
+        pl.nome AS plano,
+        p.avaliacao_media,
+        p.localidade
+    FROM profissionais p
+    INNER JOIN profissoes pf ON p.profissao_id = pf.profissao_id
+    INNER JOIN planos pl ON p.plano_id = pl.plano_id;
+END $$
 DELIMITER ;
 
 -- Procedimento para selecionar clientes
 
 DELIMITER $$
-
-Drop PROCEDURE IF EXISTS selecionar_clientes;
-
-PROCEDURE selecionar_clientes()
+DROP PROCEDURE IF EXISTS selecionar_clientes;
+CREATE PROCEDURE selecionar_clientes(IN p_nome VARCHAR(255), IN p_email VARCHAR(255))
 BEGIN
-    SELECT cli_id, cli_nome, cli_email, cli_telefone, cli_bairro, cli_rua, cli_numero_rua, cli_cep
-    FROM cliente;
-END
-
+    SELECT 
+        cli_id,
+        cli_nome,
+        cli_email,
+        cli_telefone,
+        cli_bairro,
+        cli_rua,
+        cli_numero_rua,
+        cli_cep
+    FROM cliente
+    WHERE (p_nome IS NULL OR cli_nome LIKE CONCAT('%', p_nome, '%'))
+      AND (p_email IS NULL OR cli_email LIKE CONCAT('%', p_email, '%'));
+END $$
 DELIMITER ;
+
 
 -- Procedimento para selecionar admins
 
 DELIMITER $$
-
-Drop PROCEDURE IF EXISTS selecionar_admins;
-
-PROCEDURE selecionar_admins()
+DROP PROCEDURE IF EXISTS selecionar_admins;
+CREATE PROCEDURE selecionar_admins(IN p_departamento VARCHAR(100), IN p_status TINYINT)
 BEGIN
-    SELECT admin_id, cli_id, admin_departamento, admin_cargo, admin_senha, nivel_acesso, status
-    FROM admins;
-END
-
+    SELECT 
+        admin_id,
+        cli_id,
+        admin_departamento,
+        admin_cargo,
+        admin_senha,
+        nivel_acesso,
+        status
+    FROM admins
+    WHERE (p_departamento IS NULL OR admin_departamento LIKE CONCAT('%', p_departamento, '%'))
+      AND (p_status IS NULL OR status = p_status);
+END $$
 DELIMITER ;
+
 
 -- Deletar profissionais
 
 DELIMITER $$
-
-Drop PROCEDURE IF EXISTS deletar_profissionais;
-
-PROCEDURE deletar_profissionais()
+DROP PROCEDURE IF EXISTS deletar_profissionais;
+CREATE PROCEDURE deletar_profissionais(IN p_pro_id INT)
 BEGIN
-    DELETE FROM profissionais;
-END
-
-DELIMITER ;
-
--- Deletar clientes
-
-DELIMITER $$
-
-Drop PROCEDURE IF EXISTS deletar_clientes;
-
-PROCEDURE deletar_clientes()
-BEGIN
-    DELETE FROM cliente;
-END
-
+    DELETE FROM profissionais
+    WHERE pro_id = p_pro_id;
+END $$
 DELIMITER ;
 
 

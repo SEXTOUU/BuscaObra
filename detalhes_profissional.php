@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="card-body">
                <!-- Exibindo a imagem do profissional com uma classe específica -->
                 <?php if (!empty($profissional['imagem'])): ?>
-                        <img src="img/<?php echo htmlspecialchars($profissional['imagem']); ?>" class="card-img-top mb-3 img-profissional" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
+                        <img src="<?php echo htmlspecialchars($profissional['imagem']); ?>" class="card-img-top mb-3 img-profissional" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
                 <?php else: ?>
                     <img src="images/userphoto/default-avatar.png" class="card-img-top mb-3 img-profissional" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
                 <?php endif; ?>

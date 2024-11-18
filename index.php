@@ -8,14 +8,13 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     $cli_id = $_SESSION['cli_id'];
     $usuario = $_SESSION['usuario'];
     $cli_tipo = $_SESSION['cli_tipo'];
+    
 
     $imagemPerfil = obterImagemPerfil($cli_id);
 } else {
     $usuario = null;
     $cliTipo = null;
 }
-
-
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -34,7 +33,8 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css">
-    
+
+    <script src="js/sweetalert2.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
@@ -51,10 +51,10 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
             </div>
             <!-- Links de Navegação -->
             <div class="parent-link">
-                <a href="contato.html" class="social-links">CONTATO</a>
+                <a href="contato.php" class="social-links">CONTATO</a>
                 <a href="sobre.html" class="social-links">SOBRE</a>
-                <a href="suporte.html" class="social-links">SUPORTE</a>
-              
+                <a href="suporte.php" class="social-links">SUPORTE</a>
+                <a href="planos.php" class="social-links">PLANOS</a>
             </div>
 
             <!-- Menu de Perfil do Usuário -->
@@ -62,7 +62,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                 <div class="profile-menu">
                     <div class="profile-icon">
                     <?php if ($imagemPerfil): ?>
-                        <img src="img/<?php echo htmlspecialchars($imagemPerfil); ?>" alt="Foto do usuário">
+                        <img src="<?php echo htmlspecialchars($imagemPerfil); ?>" alt="Foto do usuário">
                     <?php else: ?>
                         <img src="images/userphoto/default-avatar.png" alt="Foto do usuário">
                     <?php endif; ?>
@@ -71,7 +71,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <div class="profile-dropdown">
 
                     <?php if ($imagemPerfil): ?>
-                        <img src="img/<?php echo htmlspecialchars($imagemPerfil); ?>" alt="Foto do usuário">
+                        <img src="<?php echo htmlspecialchars($imagemPerfil); ?>" alt="Foto do usuário">
                     <?php else: ?>
                         <img src="images/userphoto/default-avatar.png" alt="Foto do usuário">
                     <?php endif; ?>
@@ -203,9 +203,9 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                             $profissionais = $result->fetchAll(PDO::FETCH_ASSOC);
 
                             foreach ($profissionais as $profissional) {
-                                $imagem = isset($profissional['imagem']) && file_exists("img/" . $profissional['imagem']) ? $profissional['imagem'] : 'default-avatar.png';
+                                $imagem = isset($profissional['imagem']) && file_exists("" . $profissional['imagem']) ? $profissional['imagem'] : 'default-avatar.png';
                                 echo '<div class="card">';
-                                echo '<img class="card-img-top" src="img/' . $imagem . '" alt="Foto do Profissional">';
+                                echo '<img class="card-img-top" src="' . $imagem . '" alt="Foto do Profissional">';
                                 echo '<h3>' . $profissional['pro_nome'] . '</h3>';
                                 echo '<p>Profissão: ' . $profissional['pro_profissao'] . '</p>';
                                 echo '<p>Avaliação: ' . $profissional['avaliacao_media'] . '</p>';
@@ -228,11 +228,10 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <span>Conecte-se conosco nas redes sociais:</span>
                 </div>
                 <div class="social-icons">
-                    <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-icon" aria-label="Google"><i class="fab fa-google"></i></a>
-                    <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://facebook.com" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://twitter.com" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://linkedin.com" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
                     <a href="#" class="social-icon" aria-label="GitHub"><i class="fab fa-github"></i></a>
                 </div>
             </section>
@@ -247,18 +246,27 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <div class="footer-column">
                         <h6>Menu</h6>
                         <hr />
-                        <p><a href="#!">Contato</a></p>
-                        <p><a href="#!">Termos & Condições</a></p>
-                        <p><a href="#!">Privacidade</a></p>
-                        <p><a href="#!">Aviso de Privacidade</a></p>
+                        <p><a href="contato.php">Contato</a></p>
+                        <p><a href="sobre.php">Sobre Nós</a></p>
+                        <p><a href="blog.php">Blog</a></p>
+                        <p><a href="carreiras.php">Carreiras</a></p>
+                        <p><a href="mapa-do-site.php">Mapa do Site</a></p>
                     </div>
                     <div class="footer-column">
                         <h6>Ajuda</h6>
                         <hr />
-                        <p><a href="#!">Suporte</a></p>
-                        <p><a href="#!">Privacidade</a></p>
-                        <p><a href="#!">Termos & Condiciones</a></p>
-                        <p><a href="#!">Ajuda</a></p>
+                        <p><a href="suporte.php">Suporte</a></p>
+                        <p><a href="faq.php">Perguntas Frequentes (FAQ)</a></p>
+                        <p><a href="como-funciona.php">Como Funciona</a></p>
+                        <p><a href="politica-de-devolucao.php">Política de Devolução</a></p>
+                        <p><a href="contato.php">Fale Conosco</a></p>
+                    </div>
+                    <div class="footer-column">
+                        <h6>Informações Legais</h6>
+                        <hr />
+                        <p><a href="termos.php">Termos & Condições</a></p>
+                        <p><a href="privacidade.php">Política de Privacidade</a></p>
+                        <p><a href="aviso-de-privacidade.php">Aviso de Privacidade</a></p>
                     </div>
                     <div class="footer-column">
                         <h6>Contato</h6>
@@ -273,11 +281,12 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
             <div class="copyright">
                 © 2024 Copyright:
-                <a href="#">Buscaobra.com</a>
+                <a href="index.php">Buscaobra.com</a>
             </div>
         </footer>
     </div>
 
+    <?php displayAlerts(); ?>
     <script src="js/index.js"></script>
     <script src="js/carousel.js"></script>
 </body>

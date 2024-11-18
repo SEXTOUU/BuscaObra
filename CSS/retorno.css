@@ -1,0 +1,93 @@
+/* Estilo geral para a página de retorno */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(rgba(34, 34, 34, 0.6), rgba(34, 34, 34, 0.6)),
+    url(../images/Quais-os-tipos-de-obras-existentes-no-condominio.png) no-repeat center center fixed;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-size: 2.5em;
+    color: #333;
+}
+
+.header p {
+    font-size: 1.2em;
+    color: #555;
+}
+
+.status {
+    text-align: center;
+    font-size: 1.5em;
+    margin: 20px 0;
+}
+
+.success {
+    color: #28a745;  /* Verde para sucesso */
+}
+
+.failure {
+    color: #dc3545;  /* Vermelho para erro */
+}
+
+.payment-info {
+    font-size: 1.1em;
+    margin: 20px 0;
+    text-align: left;
+    padding: 10px;
+    border-left: 4px solid #007bff;
+}
+
+.payment-info p {
+    margin: 10px 0;
+}
+
+.action-button {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.action-button a {
+    display: inline-block;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1.3em;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: background-color 0.3s ease;
+}
+
+.action-button a:hover {
+    background-color: #0056b3;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    font-size: 0.9em;
+    color: #e6e6e6;
+    margin-top: 40px;
+    font-weight: bold;
+}
+
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+}

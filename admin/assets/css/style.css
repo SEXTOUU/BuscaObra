@@ -312,8 +312,23 @@ header {
 }
 
 .notification-text.unread {
+    background-color: #f1f1f1;
     font-weight: bold;
+}
+
+.notification-item {
+    padding: 10px;
+    font-size: 14px;
     color: #333;
+}
+
+.notification-item .notification-icon {
+    margin-right: 10px;
+}
+
+.notification-item.no-notification {
+    font-style: italic;
+    color: #888;
 }
 
 /* Badge para contagem de notificações */
@@ -376,6 +391,12 @@ header {
 
 .notification-dropdown .view-more:hover {
     background-color: #0056b3;
+}
+
+.view-more a {
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
 }
 
 .card-placeholder {

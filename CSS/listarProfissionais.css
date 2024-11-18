@@ -105,6 +105,25 @@ form {
     opacity: 1; /* Opacidade plena no hover */
 }
 
+.card-header {
+    background-color: rgba(255, 255, 255, 0.7); /* Fundo translúcido */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombrinha sutil */
+}
+
+.card-img-top {
+    width: 100px;
+    object-fit: cover;
+    margin: auto;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    display: block;
+}
+
 /* Responsividade: ajustes para telas menores */
 @media (max-width: 768px) {
     .container {

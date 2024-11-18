@@ -2,31 +2,21 @@
 session_start();
 require_once "../config.php";
 
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || $_SESSION['cli_tipo'] !== 4) {
-    header("Location: login.php");
-    exit;
-} else {
-    $usuario = $_SESSION['usuario'];
-    $cli_tipo = $_SESSION['cli_tipo'];
-}
+$admin = verificarAcesso();
 
-$pdo = getDatabaseConnection();
+$usuario = $admin['cli_nome'];
+$usuario_id = $admin['cli_id'];
+$notificacoes = obterNotificacoes($usuario_id);
+$quantidade_notificacoes = count($notificacoes);
 
-$stmt = $pdo->prepare("SELECT * FROM admins WHERE cli_id = :cli_id AND status = 1");
-$stmt->bindParam(':cli_id', $_SESSION['cli_id']);
-$stmt->execute();
+$paginaAtual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$registrosPorPagina = 10;
 
-if ($stmt->rowCount() === 0) {
-    header("Location: error.php?error=not_admin");
-    exit;
-}
+$resultado = getClientesPaginados($paginaAtual, $registrosPorPagina);
+$clientes = $resultado['dados'];
+$totalPaginas = $resultado['totalPaginas'];
 
-$admin = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if ($admin['nivel_acesso'] < 2) { 
-    header("Location: error.php?error=insufficient_privileges");
-    exit;
-}
+$cliente = null; 
 
 if (isset($_POST['logout'])) {
     logout();
@@ -77,6 +67,7 @@ if (isset($_POST['logout'])) {
                 <h2>Painel de Controle</h2>
             </div>
 
+            <?php if(empty($_GET['page'])): ?>
             <!-- Cartões do Dashboard -->
             <div class="dashboard-cards">
                 <div class="card">
@@ -168,91 +159,78 @@ if (isset($_POST['logout'])) {
                         </div>
                     </div>
                 </div>
-            </div>
-            
-
-            <!-- Aonde Pode ser editador -->
-            <!-- Tabela de Dados -->
-            <div class="dashboard-cards">
-                <div class="card">
-                
-                    <table class="data-table">
-                        <caption class="data-table-caption">Tabela de Clientes</caption>
-                        <thead class="data-table-header">
-                            <tr class="data-table-row">
-                                <th>ID</th>
-                                <th>Nome</th>
-                                <th>Email</th>
-                                <th>Bairro</th>
-                                <th>Tipo</th>
-                            </tr>
-                        </thead>
-                        <tbody class="data-table-body">
-                            <?php
-                            try{
-                                $pdo = getDatabaseConnection();
-                                $result = $pdo->prepare("SELECT cli_id, cli_nome, cli_email, cli_bairro, cli_tipo FROM cliente LIMIT 5");
-                                $result->execute();
-
-    
-                                if ($result->rowCount() > 0) {
-                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                                        echo '<tr class="data-table-row">';
-                                        echo '<td>' . htmlspecialchars($row['cli_id']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($row['cli_nome']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($row['cli_email']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($row['cli_bairro']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($row['cli_tipo']) . '</td>';
-                                        echo '</tr>';
-                                    }          
-                                } else {
-                                    echo '<tr><td colspan="5">Nenhum resultado encontrado.</td></tr>';
-                                }
-                            } catch (PDOException $e) {
-                                echo "Erro ao conectar ao banco de dados: " . $e->getMessage();
-                            }
-                            ?>                         
-                        </tbody>
-                    </table>
-                
-                </div>
-
-                <div class="card">
-                    <div class="card-placeholder">
-                        <h3>Notificações Recentes</h3>
-                        <p>Confira as últimas notificações importantes.</p>
-                    </div>
-                
-                    <div class="notifications-card">
-                        <!-- Notificação 1 -->
-                        <div class="notification-item">
-                            <i class="fas fa-exclamation-circle notification-icon"></i>
-                            <p class="notification-text">Atenção! Sua conta foi atualizada.</p>
-                        </div>
-                        
-                        <!-- Notificação 2 -->
-                        <div class="notification-item">
-                            <i class="fas fa-info-circle notification-icon"></i>
-                            <p class="notification-text">Novo recurso disponível na sua conta.</p>
-                        </div>
-                
-                        <!-- Notificação 3 -->
-                        <div class="notification-item">
-                            <i class="fas fa-check-circle notification-icon"></i>
-                            <p class="notification-text">Sua última tarefa foi concluída com sucesso.</p>
-                        </div>
-                
-                        <!-- Botão para ver mais -->
-                        <div class="view-more">
-                            <button class="btn-view-more">Ver mais</button>
-                        </div>
-                    </div>
-                </div>
             </div> 
 
-            <!-- Paginação Fim -->
+            <?php endif; ?>
+
         </main>
     </div>
+
+    <?php        
+        if (empty($_GET['page'])) {
+        // Nada
+        } else {
+        switch ($_GET['page']) {
+            case 'listaprofissionais':
+                require_once 'pages/listaprofissionais.php';
+                break;
+
+            case 'listaclientes':
+                require_once 'pages/listaclientes.php';
+                break;
+
+            case 'gerenciamento_admins':
+                require_once 'pages/gerenciamento_admins.php';
+                break;
+
+            case 'gerenciamento_planos':
+                require_once 'pages/gerenciamento_planos.php';
+                break;
+
+            case 'gerenciar_destaques':
+                require_once 'pages/gerenciar_destaques.php';
+                break;
+
+            case 'relatorio_usuarios':
+                require_once 'pages/relatorio_usuarios.php';
+                break;
+            
+            case 'configurar_filtros':
+                require_once 'pages/configurar_filtros.php';
+                break;
+            
+            case 'favoritos_avaliacoes':
+                require_once 'pages/favoritos_avaliacoes.php';
+                break;
+
+            case 'moderacao_avaliacoes':
+                require_once 'pages/moderacao_avaliacoes.php';
+                break;
+
+            case 'configuracoes_gerais':
+                require_once 'pages/configuracoes_gerais.php';
+                break;
+
+            case 'configuracoes_seguranca':
+                require_once 'pages/configuracoes_seguranca.php';
+                break;
+
+            case 'categorias':
+                require_once 'pages/gerenciar_categorias.php'; // Nome da página para gerenciar categorias
+                break;
+
+            case 'filtros':
+                require_once 'pages/configurar_filtros.php'; // Nome da página para configurar filtros
+                break;
+
+            default:
+                include '404.php';
+                break;
+        }
+        }
+
+        
+    ?>
 
     <!-- Rodapé -->
     <footer class="footer">

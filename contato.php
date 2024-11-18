@@ -1,75 +1,81 @@
 <?php
+
 require_once "config.php";
 
-if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+if (isset($_POST['name']) && isset($_POST['email']) && isset($_POST['message']) && isset($_POST['subject'])) {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $message = $_POST['message'];
+    $subject = $_POST['subject'];
 
-    $usuario = $_SESSION['usuario'];
-    $cli_tipo = $_SESSION['cli_tipo'];
-} else {
-    $usuario = null;
-    $cliTipo = null;
+    $sql = "INSERT INTO contato (name, email, message, subject) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssss", $name, $email, $message, $subject);
+    $stmt->execute();
+
+    echo "Mensagem enviada com sucesso!";
 }
 
-// Conexão com o banco de dados
-$pdo = getDatabaseConnection();
-
-// Pega o id do profissional da URL
-$profissional_id = isset($_GET['id']) ? $_GET['id'] : '';
-
-// Consulta para pegar os dados do profissional específico
-$query = "SELECT pro_nome, pro_email FROM profissionais WHERE pro_id = :id";
-$stmt = $pdo->prepare($query);
-$stmt->bindParam(':id', $profissional_id);
-$stmt->execute();
-$profissional = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// Se não encontrar o profissional, redireciona para a lista de profissionais
-if (!$profissional) {
-    header("Location: listarProfissionais.php");
-    exit();
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contatar Profissional</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title><?php echo $titulo; ?> - Contato</title>
+    <link rel="shortcut icon" href="<?= $favicon ?>" type="image/x-icon">
+
     <link rel="stylesheet" href="css/contato.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container mt-4">
-        <h2>Entre em Contato com <?php echo htmlspecialchars($profissional['pro_nome']); ?></h2>
+    <header class="header text-center">
+        <h1>Contato</h1>
+        <p class="lead">Entre em contato conosco!</p>
+    </header>
 
-        <form action="enviar_contato.php" method="POST">
-            <!-- Passa o id do profissional para o processamento -->
-            <input type="hidden" name="profissional_id" value="<?php echo $profissional_id; ?>">
-
-            <div class="form-group">
-                <label for="nome">Seu Nome:</label>
-                <input type="text" class="form-control" id="nome" name="nome" required>
+    <section class="contact-section container my-5">
+        <h2 class="text-center text-dark mb-4">Formulário de Contato</h2>
+        <p class="text-center">Preencha o formulário abaixo e nossa equipe entrará em contato o mais breve possível.</p>
+        <form>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="name">Nome</label>
+                    <input type="text" class="form-control" id="name" placeholder="Seu Nome" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Seu Email" required>
+                </div>
             </div>
-
             <div class="form-group">
-                <label for="email">Seu E-mail:</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <label for="message">Mensagem</label>
+                <textarea class="form-control" id="message" rows="4" placeholder="Digite sua mensagem aqui..." required></textarea>
             </div>
-
             <div class="form-group">
-                <label for="assunto">Assunto:</label>
-                <input type="text" class="form-control" id="assunto" name="assunto">
+                <label for="subject">Assunto</label>
+                <input type="text" class="form-control" id="subject" placeholder="Assunto" required>
             </div>
-
-            <div class="form-group">
-                <label for="mensagem">Mensagem:</label>
-                <textarea class="form-control" id="mensagem" name="mensagem" rows="4" required></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Enviar</button>
-            <button type="reset" class="btn btn-danger">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
         </form>
-    </div>
+    </section>
+
+    <section class="contact-info-section container my-5">
+        <h2 class="text-center text-dark mb-4">Informações de Contato</h2>
+        <p class="text-center">Se preferir, você pode entrar em contato conosco através das seguintes opções:</p>
+        <ul class="list-unstyled text-center">
+            <li><strong>Email:</strong> suporte@buscaobra.com.br</li>
+            <li><strong>Telefone:</strong> (11) 1234-5678</li>
+            <li><strong>WhatsApp:</strong> (11) 98765-4321</li>
+            <li><strong>Endereço:</strong> Rua da CUCA, 123, FEIRA DE SANTANA - BA, 01234-567</li>
+        </ul>
+    </section>
+
+    <footer class="footer bg-dark text-white text-center py-4">
+        <p>&copy; 2024 BuscaObra. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

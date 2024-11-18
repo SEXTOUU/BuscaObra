@@ -29,11 +29,8 @@ if ($admin['nivel_acesso'] < 2) {
 }
 
 if (isset($_POST['delete-salvar'])) {
-
     $cli_id = $_POST['cli_id'];
-
-    deletarCliente($cli_id);
-
+    deletarCliente($cli_id); // Função para excluir o cliente
     redirect("admin/listacliente.php");
 }
 
@@ -46,17 +43,36 @@ $resultado = getClientesPaginados($paginaAtual, $registrosPorPagina);
 $clientes = $resultado['dados'];
 $totalPaginas = $resultado['totalPaginas'];
 
+$cliente = null; // Inicializa a variável do cliente
+
+// Verificar se o parâmetro 'cli_id' foi passado para edição
+if (isset($_GET['cli_id'])) {
+    $cli_id = $_GET['cli_id'];
+
+    // Carregar os dados do cliente para edição
+    $query = "SELECT * FROM cliente WHERE cli_id = :cli_id";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':cli_id', $cli_id);
+    $stmt->execute();
+    $cliente = $stmt->fetch();
+
+    if (!$cliente) {
+        echo "Cliente não encontrado!";
+        exit;
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Controle - BuscaObra</title>
+    <title>Painel de Controle - BuscaObra</title>   
 
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dashboard2.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -69,183 +85,23 @@ $totalPaginas = $resultado['totalPaginas'];
     <div class="container">
         <!-- Barra Lateral -->
         <nav class="sidebar" id="sidebar">
-            <div class="logo">
-                <img src="assets/images/user.jpeg" alt="Logo">
-                <h2>BuscaObra</h2>
-            </div>
-
-            <ul>
-                <span class="title-menu">MENU</span>
-
-                <li><a href="index.php"><i
-                            class="fas fa-tachometer-alt"></i>
-                        Dashboard</a></li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-chart-line"></i> Relatórios <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Relatório de Usuários</a>
-                        <a href="#">Relatório de Avaliações</a>
-                        <a href="#">Relatório Financeiro</a>
-                    </div>
-                </li>
-
-                <span class="title-menu">CONFIGURAÇÕES</span>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-users"></i> Profissionais <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Lista de Profissionais</a>
-                        <a href="#">Cadastro de Profissionais</a>
-                        <a href="#">Gerenciar Destaques</a>
-                        <a href="#">Solicitações de Destaque</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-user"></i> Clientes <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="listacliente.php" >Lista de Clientes</a>
-                        <a href="#">Favoritos e Avaliações</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-user-shield"></i> Usuários e
-                        Permissões <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Gerenciamento de Administradores</a>
-                        <a href="#">Permissões de Acesso</a>
-                    </div>
-                </li>
-
-                <span class="title-menu">GERENCIAMENTO</span>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-star"></i> Planos e Assinaturas
-                        <i class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Gerenciamento de Planos</a>
-                        <a href="#">Status das Assinaturas</a>
-                        <a href="#">Relatório de Assinaturas</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-filter"></i> Busca e Filtros <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Configurar Filtros</a>
-                        <a href="#">Gerenciar Categorias</a>
-                        <a href="#">Configurações de Recomendações</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#">
-                        <i class="fas fa-comments"></i> 
-                        Mensagens e Suporte <span class="badge">4</span>
-                        <i class="fas fa-chevron-down dropdown-icon"></i> 
-                    </a>
-                    <div class="dropdown-content">
-                        <a href="#">Central de Mensagens</a>
-                        <a href="#">Suporte ao Cliente</a>
-                        <a href="#">Suporte ao Profissional</a>
-                        <a href="#">FAQ e Tutoriais</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-thumbs-up"></i> Avaliações e
-                        Feedbacks <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Moderação de Avaliações</a>
-                        <a href="#">Respostas de Profissionais</a>
-                    </div>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#"><i class="fas fa-cog"></i> Configurações <i
-                            class="fas fa-chevron-down dropdown-icon"></i></a>
-                    <div class="dropdown-content">
-                        <a href="#">Configurações Gerais</a>
-                        <a href="#">Configurações de Notificações</a>
-                        <a href="#">Configurações de Segurança</a>
-                        <a href="#">Configurações de Pagamento</a>
-                    </div>
-                </li>
-            </ul>
+            <?php include 'includes/sidebar.php'; ?>
         </nav>
-
-        <!-- Botão de Toggle para a barra lateral em dispositivos menores -->
-        <button class="sidebar-toggle">
-            <i class="fas fa-bars"></i> <!-- Ícone do menu -->
-        </button>
 
         <!-- Conteúdo Principal -->
         <main class="main-content">
             <!-- Cabeçalho -->
-            <header>
-                <div class="search-bar">
-                    <input type="text" class="search-input" placeholder="Buscar...">
-                    <button type="submit" name="search" class="search-button"><i class="fas fa-search"></i></button>
-                </div>
+            <?php include 'includes/header.php'; ?>
 
-                <div class="notification-banner">
-                    <span class="notification-text">Você Tem <strong> 21</strong>
-                        Notificações</span>
-                    <div class="notification-icon">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-dot"></span>
-                        
-                        <!-- Indica a contagem de notificações -->
-                        <div class="notification-dropdown">
-                            <ul>
-                                <li class="notification-item">
-                                    <i class="fas fa-check-circle notification-icon"></i>
-                                    Notificação 1</li>
-                                <li class="notification-item unread">
-                                    <i class="fas fa-exclamation-circle notification-icon"></i>
-                                    Notificação 2</li>
-                                <li class="notification-item">
-                                    <i class="fas fa-info-circle notification-icon"></i>
-                                    Notificação 3</li>
-                            </ul>
-                            <div class="view-more">Ver mais</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Informações do Usuário no Cabeçalho -->
-                <div class="user-info">
-                    <img src="assets/images/user.jpeg" alt="User">
-                    <span><?php echo $usuario; ?></span>
-                    <i class="fas fa-caret-down"></i>
-                    <div class="user-dropdown">
-                        <ul>
-                            <li><i class="fa-solid fa-user"></i> Perfil</li>
-                            <li><i class="fas fa-star"></i> Planos e Assinaturas</li>
-                            <hr>
-                            <li href="#"><i class="fas fa-cog"></i> Configurações</li>
-                            <li href="#"><i class="fas fa-question"></i> Ajuda</li>
-                            <li href="logout.php"><i class="fa-solid fa-right-to-bracket"></i> Sair</li>
-                        </ul>
-                    </div>
-                </div>
-            </header>
-        
             <div class="content">
                 <h2>Painel de Clientes</h2>
             </div>
 
             <!-- Tabela de Dados -->
             <div class="dashboard-cards">
-                <div class="card">           
+            <?php if (empty($_GET['page'])): ?>
+                <div class="card">
+                
                     <table class="data-table">
                         <caption class="data-table-caption">Painel de Clientes</caption>
                         <thead class="data-table-header">
@@ -259,26 +115,25 @@ $totalPaginas = $resultado['totalPaginas'];
                             </tr>
                         </thead>
                         <tbody class="data-table-body">
-                        <?php
-                            if (count($clientes) > 0) {
-                                foreach ($clientes as $row) {
-                                    echo '<tr class="data-table-row">';
-                                    echo '<td>' . htmlspecialchars($row['cli_id']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($row['cli_nome']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($row['cli_email']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($row['cli_bairro']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($row['cargo']) . '</td>';
-                                    echo '<td> 
-                                            <button class="open-modal-btn" id="openModalBtn1" data-id="' . $row['cli_id'] . '"><i class="fa-solid fa-eye"></i></button>    
-                                            <button class="open-modal-btn" id="openModalBtn2" data-id="' . $row['cli_id'] . '"><i class="fa-solid fa-pen-to-square"></i></button>
-                                            <button class="open-modal-btn" id="openModalBtnDelete1" data-id="' . $row['cli_id'] . '"><i class="fa-solid fa-trash"></i></button>
-                                        </td>';
-                                    echo '</tr>';
-                                }          
-                            } else {
-                                echo '<tr><td colspan="6">Nenhum resultado encontrado.</td></tr>';
-                            }
-                        ?>           
+                            <?php
+                                if (count($clientes) > 0) {
+                                    foreach ($clientes as $row) {
+                                        echo '<tr class="data-table-row">';
+                                        echo '<td>' . htmlspecialchars($row['cli_id']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($row['cli_nome']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($row['cli_email']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($row['cli_bairro']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($row['cargo']) . '</td>';
+                                        echo '<td>
+                                                <a href="?page=editar&cli_id=' . $row['cli_id'] . '" ><i class="fa-solid fa-pen-to-square"></i></a>
+                                                <a href="?page=excluir&cli_id=' . $row['cli_id'] . '" ><i class="fa-solid fa-trash"></i></a>
+                                            </td>';
+                                        echo '</tr>';
+                                    }          
+                                } else {
+                                    echo '<tr><td colspan="6">Nenhum resultado encontrado.</td></tr>';
+                                }
+                            ?>           
                         </tbody>
                     </table>
                     <div id="paginacao" class="paginacao">
@@ -286,101 +141,34 @@ $totalPaginas = $resultado['totalPaginas'];
                         <span id="info-pagina">Página <?php echo $paginaAtual; ?> de <?php echo $totalPaginas; ?></span>
                         <button onclick="window.location.href='listacliente.php?pagina=<?php echo $paginaAtual + 1; ?>'" id="btn-proximo" <?php echo ($paginaAtual >= $totalPaginas) ? 'disabled' : ''; ?>>Próximo</button>
                     </div>
-
+                
                 </div>
+                <?php endif; ?>
             </div> 
-            
-            <!-- Modal de Visualização -->
-            <div id="viewModal" class="modal">
-                <div class="modal-content">
-                    <span class="close-btn" id="closeViewModal">&times;</span>
-                    <h2 id="view-modal-title">Detalhes do Cliente</h2>
-                    <p id="view-modal-description"></p>
-                    <form method="post" class="modal-form" id="view-form">
-                        <label for="name">Nome:</label>
-                        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($dadosUsuario['nome']); ?>" disabled><br>
-
-                        <label for="role">Email:</label>
-                        <input type="text" id="role" name="email" value="<?php echo htmlspecialchars($dadosUsuario['email']); ?>"  disabled><br>
-
-                        <label for="role">Telefone:</label>
-                        <input type="text" id="role" name="telefone" value="<?php echo htmlspecialchars($dadosUsuario['telefone']); ?>"  disabled><br>
-
-                        <label for="role">Endereço:</label>
-                        <input type="text" id="role" name="endereco" value="<?php echo htmlspecialchars($dadosUsuario['endereco']); ?>"  disabled><br>
-
-                        <label for="role">Bairro:</label>
-                        <input type="text" id="role" name="bairro" value="<?php echo htmlspecialchars($dadosUsuario['bairro']); ?>"  disabled><br>
-
-                        <label for="role">Cidade:</label>
-                        <input type="text" id="role" name="cidade" value="<?php echo htmlspecialchars($dadosUsuario['cidade']); ?>"  disabled><br>
-
-                        <label for="role">Data de Nacimento:</label>
-                        <input type="text" id="role" name="datadenacimento" value="<?php echo htmlspecialchars($dadosUsuario['datadenacimento']); ?>"  disabled><br>
-
-                        <label for="role">CEP:</label>
-                        <input type="text" id="role" name="cep" value="<?php echo htmlspecialchars($dadosUsuario['cep']); ?>"  disabled><br>
-
-                        <label for="role">Cargo:</label>
-                        <input type="text" id="role" name="cargo" value="<?php echo htmlspecialchars($dadosUsuario['cargo']); ?>"  disabled><br>
-
-                        <button type="submit">Fechar</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Modal de Edição -->
-            <div id="editModal" class="modal">
-                <div class="modal-content">
-                    <span class="close-btn" id="closeEditModal">&times;</span>
-                    <h2 id="edit-modal-title">Editar Informações</h2>
-                    <form id="edit-form" class="modal-form"method="post">                  
-                        <label for="name">Nome:</label>
-                        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($dadosUsuario['nome']); ?>" placeholder="Digite o nome" required><br>
-
-                        <label for="role">Email:</label>
-                        <input type="text" id="role" name="email" value="<?php echo htmlspecialchars($dadosUsuario['email']); ?>" placeholder="Digite o email" required><br>
-
-                        <label for="role">Telefone:</label>
-                        <input type="text" id="role" name="telefone" value="<?php echo htmlspecialchars($dadosUsuario['telefone']); ?>" placeholder="Digite o telefone" required><br>
-
-                        <label for="role">Endereço:</label>
-                        <input type="text" id="role" name="endereco" value="<?php echo htmlspecialchars($dadosUsuario['endereco']); ?>" placeholder="Digite o endereço" required><br>
-
-                        <label for="role">Bairro:</label>
-                        <input type="text" id="role" name="bairro" value="<?php echo htmlspecialchars($dadosUsuario['bairro']); ?>" placeholder="Digite o bairro"  required><br>
-
-                        <label for="role">Cidade:</label>
-                        <input type="text" id="role" name="cidade" value="<?php echo htmlspecialchars($dadosUsuario['cidade']); ?>" placeholder="Digite a cidade" required><br>
-
-                        <label for="role">Data de Nacimento:</label>
-                        <input type="text" id="role" name="datadenacimento" value="<?php echo htmlspecialchars($dadosUsuario['datadenacimento']); ?>" placeholder="Digite a data de nacimento" required><br>
-
-                        <label for="role">CEP:</label>
-                        <input type="text" id="role" name="cep" value="<?php echo htmlspecialchars($dadosUsuario['cep']); ?>" placeholder="Digite o cep" required><br>
-
-                        <label for="role">Cargo:</label>
-                        <input type="text" id="role" name="cargo" value="<?php echo htmlspecialchars($dadosUsuario['cargo']); ?>" placeholder="Digite o cargo" required><br>
-
-                        <button type="submit" name="edit-salvar">Salvar</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Modal de Confirmação de Exclusão -->
-            <div id="deleteModal" class="modal">
-                <div class="modal-content">
-                    <form action="" method="post" class="modal-form">
-                        <span class="close-btn" id="closeDeleteModal">&times;</span>
-                        <h2>Tem certeza que deseja excluir?</h2>
-                        <p id="delete-modal-description">Este processo não pode ser revertido.</p>
-                        <button type="submit" name="delete-salvar"  id="confirmDelete" >Sim, excluir</button>
-                        <button id="cancelDelete">Cancelar</button>
-                    </form>
-                </div>
-            </div>
         </main>
     </div>
+
+
+    <?php 
+    
+    if(empty($_GET['page'])) {
+        //Nada
+    } else {
+        switch($_GET['page']) {
+            case 'editar':
+                require_once 'view/editar_cliente.php';
+                break;
+            case 'excluir':
+                require_once 'view/excluir_cliente.php';
+                break;
+            default:
+                echo "Ação inválida!";
+                break;
+        }
+    }
+    
+
+    ?>
 
     <!-- Rodapé -->
     <footer class="footer">
@@ -388,6 +176,5 @@ $totalPaginas = $resultado['totalPaginas'];
     </footer>
 
     <script src="assets/js/modal.js"></script>
-    <script src="assets/js/script.js"></script>
 </body>
 </html>

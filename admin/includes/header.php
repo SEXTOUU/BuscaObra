@@ -5,26 +5,28 @@
     </div>
 
     <div class="notification-banner">
-        <span class="notification-text">Você Tem <strong> 21</strong>
-            Notificações</span>
+        <span class="notification-text">Você Tem <strong><?php echo $quantidade_notificacoes; ?></strong> Notificações</span>
         <div class="notification-icon">
             <i class="fas fa-bell"></i>
-            <span class="notification-dot"></span>
-            
-            <!-- Indica a contagem de notificações -->
+            <!-- Exibe o ponto de notificação somente se houver notificações não lidas -->
+            <span class="notification-dot" style="display: <?php echo $quantidade_notificacoes > 0 ? 'inline-block' : 'none'; ?>;"></span>
+
             <div class="notification-dropdown">
                 <ul>
-                    <li class="notification-item">
-                        <i class="fas fa-check-circle notification-icon"></i>
-                        Notificação 1</li>
-                    <li class="notification-item unread">
-                        <i class="fas fa-exclamation-circle notification-icon"></i>
-                        Notificação 2</li>
-                    <li class="notification-item">
-                        <i class="fas fa-info-circle notification-icon"></i>
-                        Notificação 3</li>
+                    <?php if ($quantidade_notificacoes > 0): ?>
+                        <?php foreach ($notificacoes as $notificacao): ?>
+                            <li class="notification-item <?php echo $notificacao['lida'] ? '' : 'unread'; ?>" data-id="<?php echo $notificacao['id']; ?>">
+                                <i class="fas fa-<?php echo ($notificacao['tipo'] == 'alert' ? 'exclamation-circle' : 'info-circle'); ?> notification-icon"></i>
+                                <?php echo $notificacao['mensagem']; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <li class="notification-item">
+                            Nenhuma notificação.
+                        </li>
+                    <?php endif; ?>
                 </ul>
-                <div class="view-more">Ver mais</div>
+                <div class="view-more"><a href="notificacoes.php">Ver mais</a></div>
             </div>
         </div>
     </div>
@@ -34,7 +36,7 @@
     <!-- Informações do Usuário no Cabeçalho -->
     <div class="user-info">
         <img src="assets/images/user.jpeg" alt="User">
-        <span><?php echo $usuario; ?></span>
+        <span><?php echo htmlspecialchars($usuario); ?></span>
         <i class="fas fa-caret-down"></i>
         <div class="user-dropdown">
             <ul class="dropdown-menu">
