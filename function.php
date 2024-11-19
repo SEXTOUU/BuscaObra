@@ -34,6 +34,16 @@ function processPayment($preapproval_id) {
     }
 }
 
+function valorPlano($plano) {
+    $pdo = getDatabaseConnection();
+
+    $stmt = $pdo->prepare("SELECT valor FROM planos WHERE nome = :plano");
+    $stmt->bindParam(':plano', $plano);
+    $stmt->execute();
+
+    return $stmt->fetchColumn();
+    
+}
 
 function updateSubscription($status, $preapproval_id, $payer_email, $plano, $valor) {
     $pdo = getDatabaseConnection(); // Obtém a conexão com o banco de dados
@@ -460,5 +470,13 @@ function marcarNotificacaoComoLida($notificacao_id) {
     $stmt->execute();
 }
 
-
+function enviar_contato($nome, $email, $mensagem, $assunto) {
+    $pdo = getDatabaseConnection();
+    $stmt = $pdo->prepare("INSERT INTO contato (nome, email, mensagem, assunto, cod_data_envio) VALUES (:nome, :email, :mensagem, :assunto , NOW())");
+    $stmt->bindParam(':nome', $nome);
+    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':mensagem', $mensagem);
+    $stmt->bindParam(':assunto', $assunto);
+    return $stmt->execute();
+}
 ?>

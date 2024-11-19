@@ -145,6 +145,16 @@ CREATE TABLE assinaturas (
     FOREIGN KEY (plano_id) REFERENCES planos(plano_id)
 );
 
+CREATE TABLE contato (
+    cod_id INT PRIMARY KEY AUTO_INCREMENT,
+    cod_nome VARCHAR(255),
+    cod_email VARCHAR(255),
+    cod_mensagem TEXT,
+    cod_assunto VARCHAR(255),
+    cod_data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) DEFAULT 'pendente',
+    FOREIGN KEY (cod_email) REFERENCES cliente(cli_email)
+);
 
 -- Inserindo tipos de usuários
 INSERT INTO usertipo (usertipo_nome) VALUES ('usuario'), ('profissional'), ('moderador'), ('admin');
@@ -165,6 +175,7 @@ INSERT INTO planos (nome, valor, prioridade) VALUES
     ('Premium', 25.00, 2),
     ('VIP', 59.99,3);
 
+ALTER TABLE planos ADD  valor DECIMAL(10, 2) NOT NULL;
 -- Procedimento para atualizar a média de avaliação dos profissionais
 
 DELIMITER $$

@@ -1,11 +1,14 @@
 <?php
 require_once "config.php";
 
+//$valor = valorPlano('Premium');
+$valor = number_format(valorPlano('Premium'));
+
 // Definir os planos com seus respectivos valores e descrições
 $planos = [
     'premium' => [
         'nome' => 'Plano Premium',
-        'valor' => 25.00,
+        'valor' => $valor,
         'descricao' => 'Recursos avançados para uma experiência completa.',
         'beneficios' => [
             'Maior Destaque no Carrossel',

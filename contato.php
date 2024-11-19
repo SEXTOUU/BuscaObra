@@ -2,18 +2,12 @@
 
 require_once "config.php";
 
-if (isset($_POST['name']) && isset($_POST['email']) && isset($_POST['message']) && isset($_POST['subject'])) {
-    $name = $_POST['name'];
+if (isset($_POST['contato'])) {
+    $nome = $_POST['name'];
     $email = $_POST['email'];
-    $message = $_POST['message'];
-    $subject = $_POST['subject'];
-
-    $sql = "INSERT INTO contato (name, email, message, subject) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $name, $email, $message, $subject);
-    $stmt->execute();
-
-    echo "Mensagem enviada com sucesso!";
+    $mensagem = $_POST['message'];
+    $assunto = $_POST['subject'];
+    enviar_contato($nome, $email, $mensagem, $assunto);
 }
 
 ?>
@@ -37,7 +31,7 @@ if (isset($_POST['name']) && isset($_POST['email']) && isset($_POST['message']) 
     <section class="contact-section container my-5">
         <h2 class="text-center text-dark mb-4">Formulário de Contato</h2>
         <p class="text-center">Preencha o formulário abaixo e nossa equipe entrará em contato o mais breve possível.</p>
-        <form>
+        <form method="POST">
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="name">Nome</label>
@@ -56,7 +50,7 @@ if (isset($_POST['name']) && isset($_POST['email']) && isset($_POST['message']) 
                 <label for="subject">Assunto</label>
                 <input type="text" class="form-control" id="subject" placeholder="Assunto" required>
             </div>
-            <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+            <button type="submit" name="contato" class="btn btn-primary">Enviar Mensagem</button>
         </form>
     </section>
 
