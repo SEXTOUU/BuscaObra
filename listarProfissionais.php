@@ -84,14 +84,13 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <h5 class="card-title"><?php echo htmlspecialchars($profissional['pro_nome']); ?></h5>
                                 <p class="card-text">
                                     <strong>Profissão:</strong> <?php echo htmlspecialchars($profissional['pro_profissao']); ?><br>
-                                    <strong>E-mail:</strong> <?php echo htmlspecialchars($profissional['pro_email']); ?><br>
-                                    <strong>Telefone:</strong> <?php echo htmlspecialchars($profissional['pro_telefone']); ?><br>
                                     <strong>Descrição:</strong> <?php echo htmlspecialchars($profissional['pro_descricao']); ?><br>
                                     <strong>Média de Avaliações:</strong> <?php echo number_format($profissional['media_avaliacao'], 1); ?> / 5
                                 </p>
                                 <a href="detalhes_profissional.php?id=<?php echo $profissional['pro_id']; ?>" class="btn btn-secondary">Ver mais</a>
                             </div>
                         </div>
+                        <a href="index.php" class="btn btn-primary">Voltar</a>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>

@@ -108,8 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
                 <h5 class="card-title"><?php echo htmlspecialchars($profissional['pro_nome']); ?></h5>
                 <p><strong>Profissão:</strong> <?php echo htmlspecialchars($profissional['pro_profissao']); ?></p>
-                <p><strong>E-mail:</strong> <?php echo htmlspecialchars($profissional['pro_email']); ?></p>
-                <p><strong>Telefone:</strong> <?php echo htmlspecialchars($profissional['pro_telefone']); ?></p>
                 <p><strong>Descrição:</strong> <?php echo nl2br(htmlspecialchars($profissional['pro_descricao'])); ?></p>
 
                 <p class="text-muted">Clique em um dos botões abaixo para entrar em contato com o profissional.</p>
@@ -153,8 +151,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <textarea name="comentario" id="comentario" class="form-control" rows="4" required></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Enviar Avaliação</button>
+            <a href="listarProfissionais.php" class="btn btn-secondary">Voltar</a>
         </form>
     </div>
-    
 </body>
 </html>

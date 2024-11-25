@@ -103,7 +103,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                         <hr>
                         <ul>
                             <li><a href="login.php"><i class="dropdown-icon bi bi-box-arrow-in-right"></i> Login</a></li>
-                            <li><a href="cadastro.html"><i class="dropdown-icon bi bi-person-plus"></i> Cadastrar-se</a></li>
+                            <li><a href="cadastro.php"><i class="dropdown-icon bi bi-person-plus"></i> Cadastrar-se</a></li>
                         </ul>
                     </div>
                 </div>
@@ -143,7 +143,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                         if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true){
                             echo '<a href="perfil.php" class="btn">Meu Perfil</a>';
                         } else {
-                            echo '<a href="cadastro.html" class="btn">Fazer Cadastro</a>';
+                            echo '<a href="cadastro.php" class="btn">Fazer Cadastro</a>';
                         }
                     ?>
                 </div>
