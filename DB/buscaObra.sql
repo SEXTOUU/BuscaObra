@@ -236,81 +236,6 @@ END $$
 
 DELIMITER ;
 
--- Procedimento para selecionar profissionais
-DELIMITER $$
-DROP PROCEDURE IF EXISTS selecionar_profissionais;
-CREATE PROCEDURE selecionar_profissionais()
-BEGIN
-    SELECT 
-        p.pro_id,
-        p.pro_nome,
-        p.pro_email,
-        pf.nome AS profissao,
-        p.pro_telefone,
-        p.pro_descricao,
-        p.pro_foto,
-        pl.nome AS plano,
-        p.avaliacao_media,
-        p.localidade
-    FROM profissionais p
-    INNER JOIN profissoes pf ON p.profissao_id = pf.profissao_id
-    INNER JOIN planos pl ON p.plano_id = pl.plano_id;
-END $$
-
-DELIMITER ;
-
--- Procedimento para selecionar clientes
-DELIMITER $$
-DROP PROCEDURE IF EXISTS selecionar_clientes;
-CREATE PROCEDURE selecionar_clientes(IN p_nome VARCHAR(255), IN p_email VARCHAR(255))
-BEGIN
-    SELECT 
-        cli_id,
-        cli_nome,
-        cli_email,
-        cli_telefone,
-        cli_bairro,
-        cli_rua,
-        cli_numero_rua,
-        cli_cep
-    FROM cliente
-    WHERE (p_nome IS NULL OR cli_nome LIKE CONCAT('%', p_nome, '%'))
-      AND (p_email IS NULL OR cli_email LIKE CONCAT('%', p_email, '%'));
-END $$
-
-DELIMITER ;
-
--- Procedimento para selecionar admins
-DELIMITER $$
-DROP PROCEDURE IF EXISTS selecionar_admins;
-CREATE PROCEDURE selecionar_admins(IN p_departamento VARCHAR(100), IN p_status TINYINT)
-BEGIN
-    SELECT 
-        admin_id,
-        cli_id,
-        admin_departamento,
-        admin_cargo,
-        admin_senha,
-        nivel_acesso,
-        status
-    FROM admins
-    WHERE (p_departamento IS NULL OR admin_departamento LIKE CONCAT('%', p_departamento, '%'))
-      AND (p_status IS NULL OR status = p_status);
-END $$
-
-DELIMITER ;
-
--- Deletar profissionais
-DELIMITER $$
-DROP PROCEDURE IF EXISTS deletar_profissionais;
-CREATE PROCEDURE deletar_profissionais(IN p_pro_id INT)
-BEGIN
-    DELETE FROM profissionais
-    WHERE pro_id = p_pro_id;
-END $$
-
-DELIMITER ;
-
 -- User Admin
 INSERT INTO cliente (
     cli_nome, 
@@ -318,7 +243,7 @@ INSERT INTO cliente (
     cli_senha, 
     cli_tipo
 ) VALUES (
-    'Super Admin',                 -- Nome do cliente
+    'admin',                 -- Nome do cliente
     'superadmin@dominio.com',       -- E-mail do cliente
     '$2y$10$vouxOEzuPvGzt1mKU2o5sOMvwa8ZnS/7psZkEw8JMSi9KQJRaR.DW',  -- Hash da senha "123456"
     4                              -- Tipo de usuário 'admin' (4 no caso, se 'admin' for o tipo correto)
