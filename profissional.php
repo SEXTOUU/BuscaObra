@@ -2,6 +2,11 @@
 
 require_once "config.php";
 
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+    redirect("index.php");
+    exit;
+}
+
 if (isset($_POST['cadastrar'])) {
     $nome = $_POST['nome'];
     $email = $_POST['email'];

@@ -12,6 +12,15 @@ define('MP_ACCESS_TOKEN', 'TOKEN DO MERCADOPAGO'); // Substitua pelo seu token
 // URL para notificação (exemplo, pode ser personalizada)
 define('MP_NOTIFICATION_URL', 'http://127.0.0.1/retorno.php');
 
+// Configurações de e-mail
+define('SMTP_HOST', 'smtp.gmail.com');    // Substitua pelo host do servidor SMTP
+define('SMTP_USER', 'x5Y9r@example.com');        // Substitua pelo nome de usuário do servidor SMTP
+define('SMTP_PASS', 'sua_senha');        // Substitua pela senha do servidor SMTP
+define('SMTP_PORT', 587);                   // Substitua pela porta SMTP (geralmente 587)
+
+define('BASE_URL', 'http://127.0.0.1:81');
+
+
 // Configurações Gerais
 $titulo = 'BuscaObra';
 $descricao = 'BuscaObra e uma plataforma de busca de profissionais de construção e manutenção.';

@@ -13,7 +13,8 @@ DROP TABLE IF EXISTS planos;
 DROP TABLE IF EXISTS logs;
 DROP TABLE IF EXISTS notificacoes;
 DROP TABLE IF EXISTS assinaturas;
-
+DROP TABLE IF EXISTS contato;
+DROP TABLE IF EXISTS redefinicao_senha;
 
 -- Tabela Usertipo (define tipos de usuário)
 CREATE TABLE usertipo (
@@ -37,7 +38,15 @@ CREATE TABLE cliente (
     FOREIGN KEY (cli_tipo) REFERENCES usertipo(usertipo_id)
 );
 
-alter table cliente add column cli_telefone char(14);
+-- Tabela redefinicao_senha (relaciona cliente com token para recuperação de senha)
+CREATE TABLE redefinicao_senha (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cli_id INT NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_expiracao TIMESTAMP NULL, 
+    CONSTRAINT fk_cliente FOREIGN KEY (cli_id) REFERENCES cliente(cli_id) ON DELETE CASCADE
+);
 
 -- Tabela Categorias (categorias de profissões, ex: Construção, Reparos, etc.)
 CREATE TABLE categorias (
@@ -79,7 +88,6 @@ CREATE TABLE profissionais (
     FOREIGN KEY (cli_id) REFERENCES cliente(cli_id) ON DELETE CASCADE,
     FOREIGN KEY (profissao_id) REFERENCES profissoes(profissao_id),
     FOREIGN KEY (plano_id) REFERENCES planos(plano_id)
-
 );
 
 -- Tabela Admins (extensão de cliente para dados específicos de admins)
@@ -95,7 +103,6 @@ CREATE TABLE admins (
     data_modificacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (cli_id) REFERENCES cliente(cli_id)
 );
-
 
 -- Tabela Avaliacoes (armazena avaliações e comentários dos profissionais)
 CREATE TABLE avaliacoes (
@@ -120,6 +127,7 @@ CREATE TABLE logs (
     ip_usuario VARCHAR(45) -- IP do usuário, se aplicável
 );
 
+-- Tabela notificacoes
 CREATE TABLE notificacoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL, 
@@ -145,6 +153,7 @@ CREATE TABLE assinaturas (
     FOREIGN KEY (plano_id) REFERENCES planos(plano_id)
 );
 
+-- Tabela Contato (formulário de contato)
 CREATE TABLE contato (
     cod_id INT PRIMARY KEY AUTO_INCREMENT,
     cod_nome VARCHAR(255),
@@ -173,11 +182,9 @@ INSERT INTO profissoes (nome, categoria_id) VALUES
 INSERT INTO planos (nome, valor, prioridade) VALUES 
     ('Gratuito', 0.00, 1),
     ('Premium', 25.00, 2),
-    ('VIP', 59.99,3);
+    ('VIP', 59.99, 3);
 
-ALTER TABLE planos ADD  valor DECIMAL(10, 2) NOT NULL;
 -- Procedimento para atualizar a média de avaliação dos profissionais
-
 DELIMITER $$
 
 CREATE TRIGGER atualiza_avaliacao_media_insert
@@ -229,10 +236,7 @@ END $$
 
 DELIMITER ;
 
-
-
 -- Procedimento para selecionar profissionais
-
 DELIMITER $$
 DROP PROCEDURE IF EXISTS selecionar_profissionais;
 CREATE PROCEDURE selecionar_profissionais()
@@ -252,10 +256,10 @@ BEGIN
     INNER JOIN profissoes pf ON p.profissao_id = pf.profissao_id
     INNER JOIN planos pl ON p.plano_id = pl.plano_id;
 END $$
+
 DELIMITER ;
 
 -- Procedimento para selecionar clientes
-
 DELIMITER $$
 DROP PROCEDURE IF EXISTS selecionar_clientes;
 CREATE PROCEDURE selecionar_clientes(IN p_nome VARCHAR(255), IN p_email VARCHAR(255))
@@ -273,11 +277,10 @@ BEGIN
     WHERE (p_nome IS NULL OR cli_nome LIKE CONCAT('%', p_nome, '%'))
       AND (p_email IS NULL OR cli_email LIKE CONCAT('%', p_email, '%'));
 END $$
+
 DELIMITER ;
 
-
 -- Procedimento para selecionar admins
-
 DELIMITER $$
 DROP PROCEDURE IF EXISTS selecionar_admins;
 CREATE PROCEDURE selecionar_admins(IN p_departamento VARCHAR(100), IN p_status TINYINT)
@@ -294,11 +297,10 @@ BEGIN
     WHERE (p_departamento IS NULL OR admin_departamento LIKE CONCAT('%', p_departamento, '%'))
       AND (p_status IS NULL OR status = p_status);
 END $$
+
 DELIMITER ;
 
-
 -- Deletar profissionais
-
 DELIMITER $$
 DROP PROCEDURE IF EXISTS deletar_profissionais;
 CREATE PROCEDURE deletar_profissionais(IN p_pro_id INT)
@@ -306,9 +308,21 @@ BEGIN
     DELETE FROM profissionais
     WHERE pro_id = p_pro_id;
 END $$
+
 DELIMITER ;
 
-
+-- User Admin
+INSERT INTO cliente (
+    cli_nome, 
+    cli_email, 
+    cli_senha, 
+    cli_tipo
+) VALUES (
+    'Super Admin',                 -- Nome do cliente
+    'superadmin@dominio.com',       -- E-mail do cliente
+    '$2y$10$vouxOEzuPvGzt1mKU2o5sOMvwa8ZnS/7psZkEw8JMSi9KQJRaR.DW',  -- Hash da senha "123456"
+    4                              -- Tipo de usuário 'admin' (4 no caso, se 'admin' for o tipo correto)
+);
 
 -- SuperAdmin
 INSERT INTO admins (cli_id, admin_departamento, admin_cargo, admin_senha, nivel_acesso, status)

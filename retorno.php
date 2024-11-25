@@ -16,6 +16,8 @@ if (isset($_GET['status'], $_GET['preapproval_id'], $_GET['payer_email'])) {
     $payer_email = $_GET['payer_email'];
 
 
+
+    // Atualizando a assinatura no banco de dados
     updateSubscription($status, $preapproval_id, $payer_email, $plano, $valor);
 
     // Verificando o pagamento usando a função processPayment

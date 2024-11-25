@@ -249,3 +249,21 @@ input::placeholder {
   background-color: #ffdb4d; /* Amarelo mais claro */
   transform: scale(0.95);
 }
+
+.text-center {
+  text-align: center;
+  margin: 20px 0;
+  color: #181817; 
+  font-weight: bold;
+}
+
+.text-center a {
+  color: #035fd8;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.text-center a:hover {
+  color: #000000;
+  text-decoration: underline;
+}

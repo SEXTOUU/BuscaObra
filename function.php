@@ -1,6 +1,10 @@
 <?php
 require_once 'vendor/autoload.php';
 
+// Incluindo o autoload do PHPMailer
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 function getDatabaseConnection() {
     try {
         // Usando as constantes definidas no config.php
@@ -280,6 +284,10 @@ function setAlert($type) {
             $message = "Perfil atualizado com sucesso!";
             $alertType = "success";
             break;
+        case 'senha_redefinida':
+            $message = "Senha redefinida com sucesso!";
+            $alertType = "success";
+            break;
 
         // Avisos
         case 'warning_invalid_data':
@@ -304,6 +312,18 @@ function setAlert($type) {
             break;
         case 'warning_password_match':
             $message = "As senhas não coincidem. Tente novamente.";
+            $alertType = "warning";
+            break;
+        case 'campo_vazio':
+            $message = "Por favor, preencha todos os campos!";
+            $alertType = "warning";
+            break;
+        case 'senha_muito_curta':
+            $message = "A senha deve ter pelo menos 6 caracteres.";
+            $alertType = "warning";
+            break;
+        case 'senhas_diferentes':
+            $message = "As senhas informadas devem ser iguais.";
             $alertType = "warning";
             break;
 
@@ -336,6 +356,47 @@ function setAlert($type) {
             $message = "O e-mail informado não foi encontrado no sistema.";
             $alertType = "error";
             break;
+        case 'invalid_login':
+            $message = "Nome ou senha inválida. Tente novamente.";
+            $alertType = "error";
+            break;
+        case 'invalid_password':
+            $message = "Senha incorreta! Tente novamente.";
+            $alertType = "error";
+            break;
+        case 'invalid_email':
+            $message = "E-mail inválido. Tente novamente.";
+            $alertType = "error";
+            break;
+        case 'invalid_captcha':
+            $message = "Captcha inválido. Tente novamente.";
+            $alertType = "error";
+            break;
+        case 'empty_fields':
+            $message = "Por favor, preencha todos os campos!";
+            $alertType = "error";
+            break;
+        case 'invalid_token':
+            $message = "Token inválido. Por favor, tente novamente.";
+            $alertType = "error";
+            break;
+        case 'invalid_data':
+            $message = "Dados inválidos. Por favor, verifique os dados informados.";
+            $alertType = "error";
+            break;
+        case 'erro_redefinir_senha':
+            $message = "Erro ao redefinir a senha. Por favor, tente novamente.";
+            $alertType = "error";
+            break;
+        case 'token_invalido':
+            $message = "Token inválido. Por favor, tente novamente.";
+            $alertType = "error";
+            break;
+        case 'token_expirado':
+            $message = "Token expirado. Por favor, tente novamente.";
+            $alertType = "error";
+            break;
+        
 
         // Informações
         case 'info_no_change':
@@ -478,5 +539,129 @@ function enviar_contato($nome, $email, $mensagem, $assunto) {
     $stmt->bindParam(':mensagem', $mensagem);
     $stmt->bindParam(':assunto', $assunto);
     return $stmt->execute();
+}
+
+function recuperarSenha($email) {
+
+    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        setAlert('email_not_found');
+        return false;
+    }
+
+    $pdo = getDatabaseConnection();
+    $stmt = $pdo->prepare("SELECT * FROM cliente WHERE cli_email = :email");
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+
+    if ($stmt->rowCount() === 0) {
+        setAlert('email_not_found');
+        return false;
+    } else {
+
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $stmt = $pdo->prepare("DELETE FROM redefinicao_senha WHERE cli_id = :cli_id");
+        $stmt->bindParam(':cli_id', $usuario['cli_id']);
+        $stmt->execute();
+
+        $token = bin2hex(random_bytes(32));
+        $expiracao = date('Y-m-d H:i:s', strtotime('+1 hour'));
+        
+        $stmt = $pdo->prepare("INSERT INTO redefinicao_senha (cli_id, token, data_criacao, data_expiracao) VALUES (:cli_id, :token,  NOW(),:expiracao)");
+        $stmt->bindParam(':cli_id', $usuario['cli_id']);
+        $stmt->bindParam(':token', $token);
+        $stmt->bindParam(':expiracao', $expiracao);
+
+        if($stmt->execute()) {
+            $mensagem = "Ola $usuario[cli_nome],\n\n";
+            $mensagem .= "Um link para redefinir sua senha foi enviado para o seu e-mail.\n\n";
+            $mensagem .= "O link expira em 1 hora.";
+            $mensagem = "Clique no link abaixo para redefinir sua senha:\n\n";
+            $mensagem .= BASE_URL . "/redefinir-senha.php?token=$token";
+            $mensagem .= "\n\nCaso não tenha solicitado a redefinição de senha, por favor, ignore este e-mail.";
+            $mensagem .= "\n\nAtenciosamente,\nSistema";
+
+            if(enviar_email($email, $mensagem, 'Redefinir Senha')) {
+                setAlert('info_password_reset_sent');
+                return true;
+            } else {
+                setAlert('error_password_reset_failed');
+                return false;
+            }
+
+        } else {
+            setAlert('error_password_reset_failed');
+            return false;
+        }
+        
+    }
+
+}
+
+function enviar_email($email, $mensagem, $assunto) {
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->Host = SMTP_HOST;
+        $mail->SMTPAuth = true;
+        $mail->Username = SMTP_USER; // Seu e-mail
+        $mail->Password = SMTP_PASS; // Sua senha
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = SMTP_PORT;
+
+        $mail->setFrom(SMTP_USER, 'Sistema'); // Remetente
+        $mail->addAddress($email);
+        $mail->Subject = $assunto;
+        $mail->Body = $mensagem;
+
+        $mail->send();
+
+        return true;
+    } catch (Exception $e) {
+        echo "Erro ao enviar o e-mail: {$mail->ErrorInfo}";
+        return false;
+    }
+}
+
+function redefinirSenha($token, $senha) {
+    $pdo = getDatabaseConnection();
+
+    $stmt = $pdo->prepare("SELECT cli_id, data_expiracao FROM redefinicao_senha WHERE token = :token");
+    $stmt->bindParam(':token', $token);
+    $stmt->execute();
+
+    $tokenData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if(!$tokenData) {
+        setAlert('token_invalido');
+        return false;
+    }
+
+    if(strtotime($tokenData['data_expiracao']) < time()) {
+        setAlert('token_expired');
+        return false;
+    }
+
+    $hashedPassword = password_hash($senha, PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare("UPDATE cliente SET cli_senha = :senha WHERE cli_id = :cli_id");
+    $stmt->bindParam(':senha', $hashedPassword);
+    $stmt->bindParam(':cli_id', $tokenData['cli_id']);
+    $stmt->execute();
+
+    $stmt = $pdo->prepare("DELETE FROM redefinicao_senha WHERE token = :token");
+    $stmt->bindParam(':token', $token);
+    $stmt->execute();
+
+    return true;
+
+}
+
+function validarToken($token) {
+    $pdo = getDatabaseConnection();
+    $stmt = $pdo->prepare("SELECT * FROM redefinicao_senha WHERE token = :token AND data_expiracao > NOW()");
+    $stmt->bindParam(':token', $token);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
 }
 ?>
