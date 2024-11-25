@@ -70,7 +70,7 @@ if (isset($_POST['cadastrar'])) {
                             $profissaoId = $profissaoData['profissao_id'];
 
                             // Inserção na tabela profissionais
-                            $stmtFuncionario = $pdo->prepare("INSERT INTO profissionais (cli_id, pro_nome, pro_email, profissao_id, pro_profissao, pro_telefone, pro_descricao, imagem) VALUES (:cli_id, :nome, :email, :profissao_id, :pro_profissao, :telefone, :descricao, :imagem)");
+                            $stmtFuncionario = $pdo->prepare("INSERT INTO profissionais (cli_id, pro_nome, pro_email, profissao_id, pro_profissao, pro_telefone, pro_descricao, imagem, plano_id) VALUES (:cli_id, :nome, :email, :profissao_id, :pro_profissao, :telefone, :descricao, :imagem, 1)");
                             $stmtFuncionario->bindParam(':cli_id', $clienteId);
                             $stmtFuncionario->bindParam(':nome', $nome);
                             $stmtFuncionario->bindParam(':email', $email);
