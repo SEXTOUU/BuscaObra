@@ -11,7 +11,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
 $cli_id = $_SESSION['cli_id'];
 $cli_tipo = $_SESSION['cli_tipo'];
- 
 
 if (empty($cli_id)) {
     setAlert('warning_invalid_data');
@@ -24,17 +23,15 @@ try {
 
     // Consulta para obter os dados do cliente
     $sql = ($cli_tipo === 2) ? 
-        "SELECT c.cli_nome AS nome, c.cli_email AS email, p.pro_telefone AS telefone, 
-                p.pro_descricao AS descricao, p.imagem AS imagem, pr.nome AS profissao
-         FROM cliente c
-         JOIN profissionais p ON c.cli_id = p.cli_id
-         JOIN profissoes pr ON p.profissao_id = pr.profissao_id
-         WHERE c.cli_id = ?;" :
-        "SELECT c.cli_nome AS nome, c.cli_email AS email
-         FROM cliente c
-         WHERE c.cli_id = ?;";
-
-
+    "SELECT c.cli_nome AS nome, c.cli_email AS email, p.pro_telefone AS telefone, 
+            p.pro_descricao AS descricao, p.imagem AS imagem, pr.nome AS profissao
+     FROM cliente c
+     JOIN profissionais p ON c.cli_id = p.cli_id
+     JOIN profissoes pr ON p.profissao_id = pr.profissao_id
+     WHERE c.cli_id = ?;" :
+    "SELECT c.cli_nome AS nome, c.cli_email AS email
+     FROM cliente c
+     WHERE c.cli_id = ?;";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$cli_id]);
@@ -44,11 +41,11 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $novoNome = htmlspecialchars(trim($_POST['nome']));
         $novoEmail = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);
-        if($cli_tipo === 2) { // Profissional
+        if ($cli_tipo === 2) { // Profissional
             $novotelefone = htmlspecialchars(trim($_POST['telefone']));
             $novodescricao = htmlspecialchars(trim($_POST['descricao']));
         }
-        
+
         if (!$novoEmail) {
             setAlert('warning_invalid_data');
         } else {
@@ -56,14 +53,28 @@ try {
             if ($cli_tipo === 2 && isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
                 $extensoesPermitidas = ['jpg', 'jpeg', 'png', 'gif'];
                 $fotoExtensao = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-
+            
                 if (!in_array($fotoExtensao, $extensoesPermitidas)) {
                     setAlert('warning_image');
                 } else {
+                    // Caminho absoluto para salvar a imagem
+                    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/img/';
                     $novoNomeFoto = uniqid("perfil_", true) . '.' . $fotoExtensao;
-                    if (move_uploaded_file($_FILES['foto']['tmp_name'], "img/$novoNomeFoto")) {
+            
+                    // Verifique se a pasta de upload existe e tem permissões para gravação
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+            
+                    if (move_uploaded_file($_FILES['foto']['tmp_name'], $uploadDir . $novoNomeFoto)) {
+                        // Atualizar a imagem na tabela profissionais
                         $stmt = $pdo->prepare("UPDATE profissionais SET imagem = ? WHERE cli_id = ?");
                         $stmt->execute([$novoNomeFoto, $cli_id]);
+            
+                        // Se necessário, também salvar a imagem na tabela cliente
+                        $stmt = $pdo->prepare("UPDATE cliente SET imagem = ? WHERE cli_id = ?");
+                        $stmt->execute([$novoNomeFoto, $cli_id]);
+            
                         setAlert('info_message'); // Foto atualizada com sucesso
                     } else {
                         setAlert('error_image'); // Erro ao salvar a imagem
@@ -78,11 +89,7 @@ try {
                               SET c.cli_nome = ?, c.cli_email = ?, p.pro_telefone = ?, p.pro_descricao = ?
                               WHERE c.cli_id = ?";
                 $stmt = $pdo->prepare($sqlUpdate);
-                $stmt->execute([$novoNome, $novoEmail,  $novotelefone, $novodescricao,$cli_id]);
-            } else if ($cli_tipo === 1) {
-                $sqlUpdate = "UPDATE cliente SET cli_nome = ?, cli_email = ? WHERE cli_id = ?";
-                $stmt = $pdo->prepare($sqlUpdate);
-                $stmt->execute([$novoNome, $novoEmail, $cli_id]);
+                $stmt->execute([$novoNome, $novoEmail,  $novotelefone, $novodescricao, $cli_id]);
             } else {
                 $sqlUpdate = "UPDATE cliente SET cli_nome = ?, cli_email = ? WHERE cli_id = ?";
                 $stmt = $pdo->prepare($sqlUpdate);
@@ -100,6 +107,7 @@ try {
     setAlert('db_error');
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -107,11 +115,8 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $titulo; ?> - Perfil de Cliente</title>
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-
     <link rel="stylesheet" href="css/perfil.css">
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.min.css">
-
     <script src="js/sweetalert2.js"></script>
 </head>
 <body>
@@ -120,18 +125,15 @@ try {
         <section class="profile-section">
             <h2>Meu Perfil</h2>
 
-
             <?php if ($cli_tipo === 2): ?>
-                <?php if (!empty($dadosUsuario['imagem']) && file_exists('' . $dadosUsuario['imagem'])): ?>
-                    <img class="profile-picture" src="<?php echo htmlspecialchars($dadosUsuario['imagem']); ?>" alt="Imagem de <?php echo htmlspecialchars($dadosUsuario['nome']); ?>" class="profile-picture">
+                <?php if (!empty($dadosUsuario['imagem']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/img/' . $dadosUsuario['imagem'])): ?>
+                    <img class="profile-picture" src="/img/<?php echo htmlspecialchars($dadosUsuario['imagem']); ?>" alt="Imagem de <?php echo htmlspecialchars($dadosUsuario['nome']); ?>" class="profile-picture">
                 <?php else: ?>
                     <div class="default-profile-picture">
                         <img class="profile-picture" src="images/userphoto/default-avatar.png" alt="Imagem padrão" class="profile-picture">
                         <p>Sem imagem de perfil</p>
                     </div>
-
                 <?php endif; ?>
-
 
                 <!-- Exibe os dados do cliente -->
                 <div class="user-data">
@@ -184,8 +186,8 @@ try {
                         <button type="submit" class="btn-submit">Salvar alterações</button>
                     </div>
                 </form>
-            <?php else: ?> <!-- Exibe os dados do cliente -->
-                <div class="user-data"></div>
+            <?php else: ?>
+                <div class="user-data">
                     <p><strong>Nome:</strong> <?php echo htmlspecialchars($dadosUsuario['nome']); ?></p>
                     <p><strong>Email:</strong> <?php echo htmlspecialchars($dadosUsuario['email']); ?></p>
                 </div>
@@ -202,7 +204,7 @@ try {
                         <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($dadosUsuario['email']); ?>" required>
                     </div>
 
-                    <div class="form-group"></div>
+                    <div class="form-group">
                         <button type="submit" class="btn-submit">Salvar alterações</button>
                     </div>
                 </form>
@@ -210,6 +212,5 @@ try {
         </section>
     </main>
 
-    <?php displayAlerts(); ?>
 </body>
 </html>

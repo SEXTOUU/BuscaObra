@@ -45,14 +45,15 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
         <nav class="container">
             <!-- Logo -->
             <div class="logo-box">
-                <a href="#" target="_blank">
+                <a href="index.php">
                     <img src="images/logo.jpeg" class="logo" alt="BuscaObra">
                 </a>
             </div>
             <!-- Links de Navegação -->
             <div class="parent-link">
+                <a href="index.php" class="social-links">HOME</a>
                 <a href="contato.php" class="social-links">CONTATO</a>
-                <a href="sobre.html" class="social-links">SOBRE</a>
+                <a href="sobre.php" class="social-links">SOBRE</a>
                 <a href="suporte.php" class="social-links">SUPORTE</a>
                 <a href="planos.php" class="social-links">PLANOS</a>
             </div>
@@ -61,20 +62,21 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
             <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
                 <div class="profile-menu">
                     <div class="profile-icon">
-                    <?php if ($imagemPerfil): ?>
-                        <img src="<?php echo htmlspecialchars($imagemPerfil); ?>" alt="Foto do usuário">
-                    <?php else: ?>
-                        <img src="images/userphoto/default-avatar.png" alt="Foto do usuário">
-                    <?php endif; ?>
+                        <!-- Verifica se a imagem do perfil existe -->
+                        <?php if ($imagemPerfil && file_exists("img/" . $imagemPerfil)): ?>
+                            <img src="img/<?php echo htmlspecialchars($imagemPerfil); ?>" alt="Foto do usuário">
+                        <?php else: ?>
+                            <img src="images/userphoto/default-avatar.png" alt="Foto do usuário">
+                        <?php endif; ?>
                         <div class="notification-dot"></div> <!-- Indicador de notificação -->
                     </div>
                     <div class="profile-dropdown">
-
-                    <?php if ($imagemPerfil): ?>
-                        <img src="<?php echo htmlspecialchars($imagemPerfil); ?>" alt="Foto do usuário">
-                    <?php else: ?>
-                        <img src="images/userphoto/default-avatar.png" alt="Foto do usuário">
-                    <?php endif; ?>
+                        <!-- Verifica se a imagem do perfil existe -->
+                        <?php if ($imagemPerfil && file_exists("img/" . $imagemPerfil)): ?>
+                            <img src="img/<?php echo htmlspecialchars($imagemPerfil); ?>" alt="Foto do usuário">
+                        <?php else: ?>
+                            <img src="images/userphoto/default-avatar.png" alt="Foto do usuário">
+                        <?php endif; ?>
                         <p class="welcome-message">Bem-vindo(a) de volta!</p>
                         <p>Olá, <?php echo htmlspecialchars($usuario); ?></p>
                         <hr>
@@ -103,7 +105,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                         <hr>
                         <ul>
                             <li><a href="login.php"><i class="dropdown-icon bi bi-box-arrow-in-right"></i> Login</a></li>
-                            <li><a href="cadastro.html"><i class="dropdown-icon bi bi-person-plus"></i> Cadastrar-se</a></li>
+                            <li><a href="cadastro.php"><i class="dropdown-icon bi bi-person-plus"></i> Cadastrar-se</a></li>
                         </ul>
                     </div>
                 </div>
@@ -143,7 +145,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                         if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true){
                             echo '<a href="perfil.php" class="btn">Meu Perfil</a>';
                         } else {
-                            echo '<a href="cadastro.html" class="btn">Fazer Cadastro</a>';
+                            echo '<a href="cadastro.php" class="btn">Fazer Cadastro</a>';
                         }
                     ?>
                 </div>
@@ -193,25 +195,25 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <div class="card-container">
                         
                         <?php
-                        // Consulta SQL para obter os melhores profissionais
-                        $sql = "SELECT * FROM profissionais ORDER BY avaliacao_media DESC LIMIT 3";
-                        
-                        $pdo = getDatabaseConnection();
-                        $result = $pdo->query($sql);
+                            $sql = "SELECT * FROM profissionais ORDER BY avaliacao_media DESC LIMIT 3";
+                            $pdo = getDatabaseConnection();
+                            $result = $pdo->query($sql);
 
-                        if ($result->rowCount() > 0) {
-                            $profissionais = $result->fetchAll(PDO::FETCH_ASSOC);
+                            if ($result->rowCount() > 0) {
+                                $profissionais = $result->fetchAll(PDO::FETCH_ASSOC);
 
-                            foreach ($profissionais as $profissional) {
-                                $imagem = isset($profissional['imagem']) && file_exists("" . $profissional['imagem']) ? $profissional['imagem'] : 'default-avatar.png';
-                                echo '<div class="card">';
-                                echo '<img class="card-img-top" src="' . $imagem . '" alt="Foto do Profissional">';
-                                echo '<h3>' . $profissional['pro_nome'] . '</h3>';
-                                echo '<p>Profissão: ' . $profissional['pro_profissao'] . '</p>';
-                                echo '<p>Avaliação: ' . $profissional['avaliacao_media'] . '</p>';
-                                echo '</div>';
+                                foreach ($profissionais as $profissional) {
+                                    // Verifica se a imagem existe ou se a imagem padrão deve ser usada
+                                    $imagem = isset($profissional['imagem']) && file_exists("img/" . $profissional['imagem']) ? "img/" . $profissional['imagem'] : 'images/userphoto/default-avatar.png';
+
+                                    echo '<div class="card">';
+                                    echo '<img class="card-img-top" src="' . $imagem . '" alt="Foto do Profissional">';
+                                    echo '<h3>' . $profissional['pro_nome'] . '</h3>';
+                                    echo '<p>Profissão: ' . $profissional['pro_profissao'] . '</p>';
+                                    echo '<p>Avaliação: ' . $profissional['avaliacao_media'] . '</p>';
+                                    echo '</div>';
+                                }
                             }
-                        }
                         ?>
                     </div>
                 </div>    

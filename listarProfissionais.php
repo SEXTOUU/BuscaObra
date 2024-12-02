@@ -16,7 +16,7 @@ $tipo_profissional = isset($_POST['tipo_profissional']) ? $_POST['tipo_profissio
 
 $query = "
     SELECT p.pro_id, p.pro_nome, p.pro_email, p.pro_profissao, p.pro_telefone, p.pro_descricao, 
-           p.imagem,  -- Adicionando o campo imagem
+           p.imagem,
            IFNULL(AVG(a.nota), 0) AS media_avaliacao
     FROM profissionais p
     LEFT JOIN avaliacoes a ON p.pro_id = a.profissional_id
@@ -72,11 +72,25 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="col-md-4">
                         <div class="card mb-4">
                             <div class="card-header">
-                                <?php if (!empty($profissional['imagem'])): ?>
-                                    <img class="card-img-top" src="<?php echo htmlspecialchars($profissional['imagem']); ?>" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
-                                <?php else: ?>    
-                                    <img src="images/userphoto/default-avatar.png" class="card-img-top" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
-                                <?php endif; ?>
+                                <?php
+                                // Verifica se o campo 'imagem' contém o nome da imagem
+                                if (!empty($profissional['imagem'])) {
+                                    // Definindo o caminho completo para a imagem
+                                    $imagemPath = $_SERVER['DOCUMENT_ROOT'] . '/img/' . $profissional['imagem'];
+                                    
+                                    // Verifica se a imagem realmente existe no diretório
+                                    if (file_exists($imagemPath)) {
+                                        // Se a imagem existir, exibe a imagem
+                                        echo '<img class="card-img-top" src="/img/' . htmlspecialchars($profissional['imagem']) . '" alt="Imagem de ' . htmlspecialchars($profissional['pro_nome']) . '">';
+                                    } else {
+                                        // Se a imagem não existir, exibe a imagem padrão
+                                        echo '<img src="images/userphoto/default-avatar.png" class="card-img-top" alt="Imagem de ' . htmlspecialchars($profissional['pro_nome']) . '">';
+                                    }
+                                } else {
+                                    // Caso o campo 'imagem' esteja vazio, exibe a imagem padrão
+                                    echo '<img src="images/userphoto/default-avatar.png" class="card-img-top" alt="Imagem de ' . htmlspecialchars($profissional['pro_nome']) . '">';
+                                }
+                                ?>
                             </div>
 
                                 
@@ -84,8 +98,6 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <h5 class="card-title"><?php echo htmlspecialchars($profissional['pro_nome']); ?></h5>
                                 <p class="card-text">
                                     <strong>Profissão:</strong> <?php echo htmlspecialchars($profissional['pro_profissao']); ?><br>
-                                    <strong>E-mail:</strong> <?php echo htmlspecialchars($profissional['pro_email']); ?><br>
-                                    <strong>Telefone:</strong> <?php echo htmlspecialchars($profissional['pro_telefone']); ?><br>
                                     <strong>Descrição:</strong> <?php echo htmlspecialchars($profissional['pro_descricao']); ?><br>
                                     <strong>Média de Avaliações:</strong> <?php echo number_format($profissional['media_avaliacao'], 1); ?> / 5
                                 </p>
@@ -93,10 +105,16 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                    
+                <div class="btn-container">
+                    <a href="index.php" class="btn btn-primary">Voltar</a>
+                </div>
+                
             <?php else: ?>
                 <p>Nenhum profissional encontrado para o tipo selecionado.</p>
             <?php endif; ?>
+            
         </div>
     </div>
 </body>

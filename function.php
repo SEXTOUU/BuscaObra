@@ -1,9 +1,15 @@
 <?php
-require_once 'vendor/autoload.php';
+require_once 'libs/include.php';
 
 // Incluindo o autoload do PHPMailer
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
+// Incluindo as classes do MercadoPago
+use MercadoPago\MercadoPagoConfig;
+use MercadoPago\Client\PreApproval\PreApprovalClient;
+use MercadoPago\Client\MercadoPagoClient;
+use MercadoPago\Exceptions\MPApiException;
 
 function getDatabaseConnection() {
     try {
@@ -17,12 +23,12 @@ function getDatabaseConnection() {
 }
 
 // Configuração do MercadoPago (use o token configurado no config.php)
-MercadoPago\MercadoPagoConfig::setAccessToken(MP_ACCESS_TOKEN);
+MercadoPagoConfig::setAccessToken(MP_ACCESS_TOKEN);
 
 // Função para processar o pagamento via MercadoPago (exemplo simples)
 function processPayment($preapproval_id) {
     try {
-        $client = new MercadoPago\Client\PreApproval\PreApprovalClient();
+        $client = new PreApprovalClient();
         
         // Recuperando os detalhes da pré-aprovação usando o id
         $preapproval = $client->get($preapproval_id);
@@ -462,24 +468,27 @@ function obterImagemPerfil($cli_id) {
         $pdo = getDatabaseConnection();
 
         // Consulta para obter a imagem do usuário logado
-        $sql = "SELECT p.imagem 
-                FROM cliente c
-                JOIN profissionais p ON c.cli_id = p.cli_id
-                WHERE c.cli_id = ?";
+        $sql = "SELECT imagem FROM profissionais WHERE cli_id = ?";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$cli_id]);
         $dadosUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Verifica se a imagem foi encontrada, caso contrário retorna null
-        return isset($dadosUsuario['imagem']) ? $dadosUsuario['imagem'] : null;
+        // Verifica se a imagem foi encontrada
+        if (isset($dadosUsuario['imagem']) && !empty($dadosUsuario['imagem'])) {
+            return $dadosUsuario['imagem']; // Retorna o caminho da imagem
+        } else {
+            // Retorna o caminho de uma imagem padrão caso não haja imagem de perfil
+            return 'images/userphoto/default-avatar.png';
+        }
 
     } catch (PDOException $e) {
-        // Em caso de erro, exibe uma mensagem
-        echo "Erro ao buscar imagem de perfil: " . $e->getMessage();
-        return null;
+        // Em caso de erro, registra o erro no log (não exibe diretamente ao usuário)
+        error_log("Erro ao buscar imagem de perfil: " . $e->getMessage());
+        return 'images/userphoto/default-avatar.png'; // Retorna imagem padrão em caso de erro
     }
 }
+
 
 function editarCliente($cli_id, $cli_nome, $cli_email, $cli_bairro) {
     $pdo = getDatabaseConnection();

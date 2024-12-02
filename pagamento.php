@@ -1,53 +1,59 @@
 <?php
-    require_once "config.php"; // Configuração do MercadoPago
-    require_once 'vendor/autoload.php';
-    
-    use MercadoPago\MercadoPagoConfig;
-    use MercadoPago\Client\Preapproval\PreapprovalClient;
-    use MercadoPago\Exceptions\MPApiException;
+require_once "config.php"; // Configuração do MercadoPago
+require_once 'libs/include.php'; // Inclui o controlador de bibliotecas
 
-    session_start(); // Inicia a sessão para capturar o e-mail do usuário
+session_start(); // Inicia a sessão para capturar o e-mail do usuário
 
-    // Verifica se o usuário está logado e captura o e-mail
-    $emailPro = isset($_SESSION['cli_email']) ? $_SESSION['cli_email'] : 'cliente@example.com';
+use MercadoPago\MercadoPagoConfig;
+use MercadoPago\Exceptions\MPApiException;
+use MercadoPago\Client\PreApproval\PreApprovalClient;
 
-    // Configuração do token de acesso
-    MercadoPagoConfig::setAccessToken(MP_ACCESS_TOKEN); // Token de teste
+// Verifica se o usuário está logado e captura o e-mail
+$emailPro = isset($_SESSION['cli_email']) ? $_SESSION['cli_email'] : 'cliente@example.com';
 
-    // Definindo as variáveis do plano escolhido
-    $plano = $_GET['plano']; // Exemplo de plano recebido (premium, básico, etc.)
-    $valor = $_GET['valor']; // Valor do plano
+// Validação de parâmetros
+$plano = isset($_GET['plano']) ? htmlspecialchars($_GET['plano']) : 'básico';
+$valor = isset($_GET['valor']) && is_numeric($_GET['valor']) ? (float)$_GET['valor'] : 0.00;
+if ($valor <= 0) {
+    die("Valor inválido para o plano.");
+}
 
-    // Configuração das datas para a assinatura
-    $startDate = new DateTime("+1 minute", new DateTimeZone("UTC"));
-    $endDate = new DateTime("+2 years", new DateTimeZone("UTC"));
-    $startDateFormatted = $startDate->format("Y-m-d\TH:i:s\Z");
-    $endDateFormatted = $endDate->format("Y-m-d\TH:i:s\Z");
+// Configuração do token de acesso
+MercadoPagoConfig::setAccessToken(MP_ACCESS_TOKEN);
 
-    // Preparando a solicitação de pré-aprovação
-    $request = [
-        "reason" => "Assinatura do Plano {$plano} - R$ {$valor},00/mês",
-        "auto_recurring" => [
-            "frequency" => 1,
-            "frequency_type" => "months",
-            "transaction_amount" => $valor,
-            "currency_id" => "BRL",
-            //"start_date" => $startDateFormatted,
-            //"end_date" => $endDateFormatted,
-        ],
-        "payer_email" =>  $emailPro, // Email do cliente
-        "back_url" => MP_NOTIFICATION_URL, // URL de retorno após pagamento
-    ];
+// Configuração das datas para a assinatura
+$startDate = new DateTime("+1 minute", new DateTimeZone("UTC"));
+$endDate = new DateTime("+2 years", new DateTimeZone("UTC"));
 
-    $client = new PreapprovalClient();
+// Formatar com milissegundos truncados para três dígitos
+$startDateFormatted = $startDate->format("Y-m-d\TH:i:s") . '.' . substr($startDate->format("u"), 0, 3) . 'Z';
+$endDateFormatted = $endDate->format("Y-m-d\TH:i:s") . '.' . substr($endDate->format("u"), 0, 3) . 'Z';
 
-    try {
-        $preapproval = $client->create($request);
-        $paymentLink = $preapproval->init_point;
-    } catch (MPApiException $e) {
-        echo "Erro da API: " . $e->getMessage();
-        exit();
-    }
+// Preparando a solicitação de pré-aprovação
+$request = [
+    "reason" => "Assinatura do Plano {$plano} - R$ {$valor},00/mês",
+    "auto_recurring" => [
+        "frequency" => 1,
+        "frequency_type" => "months",
+        "transaction_amount" => $valor,
+        "currency_id" => "BRL",
+        //"start_date" => $startDateFormatted,
+        //"end_date" => $endDateFormatted,
+    ],
+    "payer_email" => $emailPro, // Email do cliente
+    "back_url" => MP_NOTIFICATION_URL, // URL de retorno após pagamento
+];
+
+$client = new PreapprovalClient();
+
+try {
+    $preapproval = $client->create($request);
+    $paymentLink = $preapproval->init_point;
+} catch (MPApiException $e) {
+    $errorMessage = "Houve um problema ao criar sua assinatura. Tente novamente mais tarde.";
+    error_log("Erro da API MercadoPago: " . $e->getMessage());
+    $paymentLink = null;
+}
 ?>
 
 <!DOCTYPE html>

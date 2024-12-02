@@ -98,22 +98,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h2>Detalhes do Profissional</h2>
         <div class="card">
             <div class="card-body">
-               <!-- Exibindo a imagem do profissional com uma classe específica -->
+                <!-- Exibe a imagem do profissional ou a imagem padrão -->
                 <?php if (!empty($profissional['imagem'])): ?>
-                        <img src="<?php echo htmlspecialchars($profissional['imagem']); ?>" class="card-img-top mb-3 img-profissional" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
+                    <?php
+                    // Definindo o caminho correto para a imagem, assumindo que as imagens estão armazenadas na pasta "img/"
+                    $imagemPath = 'img/' . $profissional['imagem']; 
+
+                    // Verifica se o arquivo da imagem realmente existe
+                    if (file_exists($imagemPath)) {
+                        // Se a imagem existir, exibe a imagem
+                        echo '<img src="' . htmlspecialchars($imagemPath) . '" class="card-img-top mb-3 img-profissional" alt="Imagem de ' . htmlspecialchars($profissional['pro_nome']) . '">';
+                    } else {
+                        // Se a imagem não existir, exibe a imagem padrão
+                        echo '<img src="images/userphoto/default-avatar.png" class="card-img-top mb-3 img-profissional" alt="Imagem de ' . htmlspecialchars($profissional['pro_nome']) . '">';
+                    }
+                    ?>
                 <?php else: ?>
+                    <!-- Caso não tenha imagem no banco de dados, exibe a imagem padrão -->
                     <img src="images/userphoto/default-avatar.png" class="card-img-top mb-3 img-profissional" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
                 <?php endif; ?>
-
                 
                 <h5 class="card-title"><?php echo htmlspecialchars($profissional['pro_nome']); ?></h5>
                 <p><strong>Profissão:</strong> <?php echo htmlspecialchars($profissional['pro_profissao']); ?></p>
-                <p><strong>E-mail:</strong> <?php echo htmlspecialchars($profissional['pro_email']); ?></p>
-                <p><strong>Telefone:</strong> <?php echo htmlspecialchars($profissional['pro_telefone']); ?></p>
                 <p><strong>Descrição:</strong> <?php echo nl2br(htmlspecialchars($profissional['pro_descricao'])); ?></p>
 
                 <p class="text-muted">Clique em um dos botões abaixo para entrar em contato com o profissional.</p>
-                
+
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=<?php echo urlencode($profissional['pro_email']); ?>" target="_blank" class="btn btn-primary mt-3">Contatar via Gmail</a>
                 <a href="https://api.whatsapp.com/send?phone=<?php echo urlencode($profissional['pro_telefone']); ?>" target="_blank" class="btn btn-success mt-3">Contatar via WhatsApp</a>
             </div>
@@ -153,8 +163,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <textarea name="comentario" id="comentario" class="form-control" rows="4" required></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Enviar Avaliação</button>
+            <a href="listarProfissionais.php" class="btn btn-secondary">Voltar</a>
         </form>
     </div>
-    
 </body>
 </html>

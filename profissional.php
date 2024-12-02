@@ -16,16 +16,43 @@ if (isset($_POST['cadastrar'])) {
     $senha = $_POST['senha'];
     $senhahash = password_hash($senha, PASSWORD_DEFAULT);
     $telefone_limpo = preg_replace('/\D/', '', $telefone);
-    
+
     // Verificando se o checkbox de termos foi marcado
     if (!isset($_POST['termos'])) {
         echo "<script>alert('Você precisa concordar com os Termos de Uso.');</script>";
     } else {
+        // Verifica se um arquivo de imagem foi enviado
         if (isset($_FILES["Imagem"]) && !empty($_FILES["Imagem"]["name"])) {
-            $imagem = "img/" . $_FILES["Imagem"]["name"];
-            move_uploaded_file($_FILES["Imagem"]["tmp_name"], $imagem);
+            $imagemTmp = $_FILES["Imagem"]["tmp_name"];
+            $imagemNome = $_FILES["Imagem"]["name"];
+            $imagemTipo = $_FILES["Imagem"]["type"];
+            $imagemErro = $_FILES["Imagem"]["error"];
+            $imagemTamanho = $_FILES["Imagem"]["size"];
+
+            // Validação do tipo de imagem (apenas imagens jpg, jpeg, png são permitidas)
+            $extensoesPermitidas = ['image/jpeg', 'image/png', 'image/jpg'];
+            if (!in_array($imagemTipo, $extensoesPermitidas)) {
+                echo "<script>alert('Tipo de arquivo inválido. Apenas imagens JPG, JPEG e PNG são permitidas.');</script>";
+                exit;
+            }
+
+            // Verifica se houve erro no envio do arquivo
+            if ($imagemErro !== UPLOAD_ERR_OK) {
+                echo "<script>alert('Erro no envio da imagem.');</script>";
+                exit;
+            }
+
+            // Gera um nome único para o arquivo de imagem para evitar sobrescrição
+            $imagemNomeUnico = uniqid('img_', true) . '.' . pathinfo($imagemNome, PATHINFO_EXTENSION);
+            $imagemCaminho = 'img/' . $imagemNomeUnico;
+
+            // Move o arquivo para o diretório correto
+            if (!move_uploaded_file($imagemTmp, $imagemCaminho)) {
+                echo "<script>alert('Erro ao salvar a imagem no servidor.');</script>";
+                exit;
+            }
         } else {
-            $imagem = "";
+            $imagemCaminho = '';  // Caso não tenha sido enviada uma imagem
         }
 
         // Define o tipo de usuário como "profissional" (2)
@@ -55,8 +82,8 @@ if (isset($_POST['cadastrar'])) {
                     $stmt->bindParam(':email', $email);
                     $stmt->bindParam(':senha', $senhahash);
                     $stmt->bindParam(':tipo', $tipoUsuario);
-                    $stmt->bindParam(':imagem', $imagem);
-                    
+                    $stmt->bindParam(':imagem', $imagemCaminho);
+
                     if ($stmt->execute()) {
                         $clienteId = $pdo->lastInsertId();
 
@@ -70,7 +97,7 @@ if (isset($_POST['cadastrar'])) {
                             $profissaoId = $profissaoData['profissao_id'];
 
                             // Inserção na tabela profissionais
-                            $stmtFuncionario = $pdo->prepare("INSERT INTO profissionais (cli_id, pro_nome, pro_email, profissao_id, pro_profissao, pro_telefone, pro_descricao, imagem) VALUES (:cli_id, :nome, :email, :profissao_id, :pro_profissao, :telefone, :descricao, :imagem)");
+                            $stmtFuncionario = $pdo->prepare("INSERT INTO profissionais (cli_id, pro_nome, pro_email, profissao_id, pro_profissao, pro_telefone, pro_descricao, imagem, plano_id) VALUES (:cli_id, :nome, :email, :profissao_id, :pro_profissao, :telefone, :descricao, :imagem, 1)");
                             $stmtFuncionario->bindParam(':cli_id', $clienteId);
                             $stmtFuncionario->bindParam(':nome', $nome);
                             $stmtFuncionario->bindParam(':email', $email);
@@ -78,7 +105,7 @@ if (isset($_POST['cadastrar'])) {
                             $stmtFuncionario->bindParam(':pro_profissao', $profissao);
                             $stmtFuncionario->bindParam(':telefone', $telefone_limpo);
                             $stmtFuncionario->bindParam(':descricao', $descricao);
-                            $stmtFuncionario->bindParam(':imagem', $imagem);
+                            $stmtFuncionario->bindParam(':imagem', $imagemCaminho);
 
                             if ($stmtFuncionario->execute()) {
                                 echo "<script>alert('Cadastrado com sucesso!');</script>";
@@ -111,8 +138,9 @@ if (isset($_POST['cadastrar'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro do Profissional</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="CSS/funcionario.css">
+    <link rel="stylesheet" href="css/funcionario.css">
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <script src="js/sweetalert2.js"></script>
 </head>
 <body>
     <div class="container">

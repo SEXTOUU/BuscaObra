@@ -1,6 +1,6 @@
 <?php
 require_once 'config.php';
-require_once 'vendor/autoload.php';  // Incluindo o autoload do MercadoPago
+require_once 'libs/include.php';
 
 use MercadoPago\MercadoPagoConfig;
 use MercadoPago\Client\PreApproval\PreApprovalClient;

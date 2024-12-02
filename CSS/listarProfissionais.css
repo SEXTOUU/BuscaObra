@@ -124,6 +124,14 @@ form {
     display: block;
 }
 
+.btn-container {
+    margin-top: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-left: 10px;
+
+}
+
 /* Responsividade: ajustes para telas menores */
 @media (max-width: 768px) {
     .container {
