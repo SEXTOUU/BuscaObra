@@ -184,7 +184,57 @@ INSERT INTO planos (nome, valor, prioridade) VALUES
     ('Premium', 25.00, 2),
     ('VIP', 59.99, 3);
 
+-- Procedimento para atualizar a média de avaliação dos profissionais
+DELIMITER $$
 
+CREATE TRIGGER atualiza_avaliacao_media_insert
+AFTER INSERT ON avaliacoes
+FOR EACH ROW
+BEGIN
+    UPDATE profissionais
+    SET avaliacao_media = (
+        SELECT AVG(a.nota)
+        FROM avaliacoes a
+        WHERE a.profissional_id = NEW.profissional_id
+    )
+    WHERE pro_id = NEW.profissional_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER atualiza_avaliacao_media_update
+AFTER UPDATE ON avaliacoes
+FOR EACH ROW
+BEGIN
+    UPDATE profissionais
+    SET avaliacao_media = (
+        SELECT AVG(a.nota)
+        FROM avaliacoes a
+        WHERE a.profissional_id = NEW.profissional_id
+    )
+    WHERE pro_id = NEW.profissional_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER atualiza_avaliacao_media_delete
+AFTER DELETE ON avaliacoes
+FOR EACH ROW
+BEGIN
+    UPDATE profissionais
+    SET avaliacao_media = (
+        SELECT AVG(a.nota)
+        FROM avaliacoes a
+        WHERE a.profissional_id = OLD.profissional_id
+    )
+    WHERE pro_id = OLD.profissional_id;
+END $$
+
+DELIMITER ;
 
 -- User Admin
 INSERT INTO cliente (

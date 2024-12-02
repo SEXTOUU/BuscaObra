@@ -104,6 +104,7 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <a href="detalhes_profissional.php?id=<?php echo $profissional['pro_id']; ?>" class="btn btn-secondary">Ver mais</a>
                             </div>
                         </div>
+                        <a href="index.php" class="btn btn-primary">Voltar</a>
                     </div>
                     <?php endforeach; ?>
                     
