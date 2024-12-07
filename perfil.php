@@ -126,11 +126,14 @@ try {
             <h2>Meu Perfil</h2>
 
             <?php if ($cli_tipo === 2): ?>
-                <?php if (!empty($dadosUsuario['imagem']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/img/' . $dadosUsuario['imagem'])): ?>
-                    <img class="profile-picture" src="/img/<?php echo htmlspecialchars($dadosUsuario['imagem']); ?>" alt="Imagem de <?php echo htmlspecialchars($dadosUsuario['nome']); ?>" class="profile-picture">
+                <?php 
+                $imagemCaminhoCompleto = $_SERVER['DOCUMENT_ROOT'] . '/img/' . $dadosUsuario['imagem'];
+                // Aqui estamos garantindo que há uma barra após o diretório raiz
+                if (!empty($dadosUsuario['imagem']) && file_exists($imagemCaminhoCompleto)): ?>
+                    <img class="profile-picture" src="/img/<?php echo htmlspecialchars($dadosUsuario['imagem']); ?>" alt="Imagem de <?php echo htmlspecialchars($dadosUsuario['nome']); ?>">
                 <?php else: ?>
                     <div class="default-profile-picture">
-                        <img class="profile-picture" src="images/userphoto/default-avatar.png" alt="Imagem padrão" class="profile-picture">
+                        <img class="profile-picture" src="images/userphoto/default-avatar.png" alt="Imagem padrão">
                         <p>Sem imagem de perfil</p>
                     </div>
                 <?php endif; ?>

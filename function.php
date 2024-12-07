@@ -463,24 +463,26 @@ function displayAlerts() {
 
 // Função para obter a imagem de perfil do usuário
 function obterImagemPerfil($cli_id) {
+    if (empty($cli_id) || !is_numeric($cli_id)) {
+        // Retorna a imagem padrão se o ID do cliente for inválido
+        return null;
+    }
+
     try {
         // Conectar ao banco de dados
         $pdo = getDatabaseConnection();
 
         // Consulta para obter a imagem do usuário logado
         $sql = "SELECT imagem FROM profissionais WHERE cli_id = ?";
-        
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$cli_id]);
         $dadosUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Verifica se a imagem foi encontrada
-        if (isset($dadosUsuario['imagem']) && !empty($dadosUsuario['imagem'])) {
-            return $dadosUsuario['imagem']; // Retorna o caminho da imagem
-        } else {
-            // Retorna o caminho de uma imagem padrão caso não haja imagem de perfil
-            return 'images/userphoto/default-avatar.png';
+        if (!empty($dadosUsuario['imagem'])) {
+            return $dadosUsuario['imagem']; // Retorna o nome da imagem
         }
+
+        return null; // Caso não haja imagem, retorna null
 
     } catch (PDOException $e) {
         // Em caso de erro, registra o erro no log (não exibe diretamente ao usuário)
@@ -488,6 +490,7 @@ function obterImagemPerfil($cli_id) {
         return 'images/userphoto/default-avatar.png'; // Retorna imagem padrão em caso de erro
     }
 }
+
 
 
 function editarCliente($cli_id, $cli_nome, $cli_email, $cli_bairro) {

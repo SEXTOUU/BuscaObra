@@ -81,7 +81,7 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     // Verifica se a imagem realmente existe no diretório
                                     if (file_exists($imagemPath)) {
                                         // Se a imagem existir, exibe a imagem
-                                        echo '<img class="card-img-top" src="/img/' . htmlspecialchars($profissional['imagem']) . '" alt="Imagem de ' . htmlspecialchars($profissional['pro_nome']) . '">';
+                                        echo '<img class="card-img-top" src=" /img/' . htmlspecialchars($profissional['imagem']) . '" alt="Imagem de ' . htmlspecialchars($profissional['pro_nome']) . '">';
                                     } else {
                                         // Se a imagem não existir, exibe a imagem padrão
                                         echo '<img src="images/userphoto/default-avatar.png" class="card-img-top" alt="Imagem de ' . htmlspecialchars($profissional['pro_nome']) . '">';
@@ -104,7 +104,6 @@ $profissionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <a href="detalhes_profissional.php?id=<?php echo $profissional['pro_id']; ?>" class="btn btn-secondary">Ver mais</a>
                             </div>
                         </div>
-                        <a href="index.php" class="btn btn-primary">Voltar</a>
                     </div>
                     <?php endforeach; ?>
                     

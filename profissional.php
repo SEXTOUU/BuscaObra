@@ -29,6 +29,10 @@ if (isset($_POST['cadastrar'])) {
             $imagemErro = $_FILES["Imagem"]["error"];
             $imagemTamanho = $_FILES["Imagem"]["size"];
 
+            if (!file_exists($_SERVER['DOCUMENT_ROOT'] . '/img')) {
+                mkdir($_SERVER['DOCUMENT_ROOT'] . '/img', 0777, true);  // Cria o diretório com permissões adequadas
+            }
+
             // Validação do tipo de imagem (apenas imagens jpg, jpeg, png são permitidas)
             $extensoesPermitidas = ['image/jpeg', 'image/png', 'image/jpg'];
             if (!in_array($imagemTipo, $extensoesPermitidas)) {
@@ -42,17 +46,22 @@ if (isset($_POST['cadastrar'])) {
                 exit;
             }
 
-            // Gera um nome único para o arquivo de imagem para evitar sobrescrição
+            // Gerar um nome único para a imagem
             $imagemNomeUnico = uniqid('img_', true) . '.' . pathinfo($imagemNome, PATHINFO_EXTENSION);
-            $imagemCaminho = 'img/' . $imagemNomeUnico;
+
+            // Caminho absoluto para salvar o arquivo no servidor
+            $imagemCaminhoAbsoluto = $_SERVER['DOCUMENT_ROOT'] . '/img/' . $imagemNomeUnico;
 
             // Move o arquivo para o diretório correto
-            if (!move_uploaded_file($imagemTmp, $imagemCaminho)) {
+            if (!move_uploaded_file($imagemTmp, $imagemCaminhoAbsoluto)) {
                 echo "<script>alert('Erro ao salvar a imagem no servidor.');</script>";
                 exit;
             }
+
+            // Salva apenas o nome único da imagem no banco de dados
+            $imagemNomeUnicoParaBanco = $imagemNomeUnico;
         } else {
-            $imagemCaminho = '';  // Caso não tenha sido enviada uma imagem
+            $imagemNomeUnicoParaBanco = '';  // Caso não tenha sido enviada uma imagem
         }
 
         // Define o tipo de usuário como "profissional" (2)
@@ -82,7 +91,7 @@ if (isset($_POST['cadastrar'])) {
                     $stmt->bindParam(':email', $email);
                     $stmt->bindParam(':senha', $senhahash);
                     $stmt->bindParam(':tipo', $tipoUsuario);
-                    $stmt->bindParam(':imagem', $imagemCaminho);
+                    $stmt->bindParam(':imagem', $imagemNomeUnicoParaBanco); // Salva apenas o nome da imagem no banco
 
                     if ($stmt->execute()) {
                         $clienteId = $pdo->lastInsertId();
@@ -105,7 +114,7 @@ if (isset($_POST['cadastrar'])) {
                             $stmtFuncionario->bindParam(':pro_profissao', $profissao);
                             $stmtFuncionario->bindParam(':telefone', $telefone_limpo);
                             $stmtFuncionario->bindParam(':descricao', $descricao);
-                            $stmtFuncionario->bindParam(':imagem', $imagemCaminho);
+                            $stmtFuncionario->bindParam(':imagem', $imagemNomeUnicoParaBanco);  // Salva apenas o nome da imagem no banco
 
                             if ($stmtFuncionario->execute()) {
                                 echo "<script>alert('Cadastrado com sucesso!');</script>";

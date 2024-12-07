@@ -1,22 +1,21 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const profileMenu = document.querySelector(".profile-menu");
-    const dropdown = document.querySelector(".profile-dropdown");
-
-    // Verifica se os elementos existem antes de adicionar eventos
-    if (profileMenu && dropdown) {
-        // Toggle o menu dropdown ao clicar no ícone do perfil
-        profileMenu.addEventListener("click", function(event) {
-            event.stopPropagation();
-            dropdown.classList.toggle("active");
-        });
-
-        // Fecha o dropdown ao clicar fora dele
-        document.addEventListener("click", function(event) {
-            if (!profileMenu.contains(event.target) && !dropdown.contains(event.target)) {
-                dropdown.classList.remove("active");
-            }
-        });
-    } else {
-        console.warn("Elementos de menu de perfil não encontrados.");
-    }
+// Aguarda o carregamento completo da página
+document.addEventListener('DOMContentLoaded', function () {
+    // Seleciona o botão do dropdown
+    const dropdownButton = document.getElementById('dropdownMenuButton');
+    
+    // Seleciona o menu dropdown
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    
+    // Adiciona o evento de clique ao botão para alternar a exibição do menu
+    dropdownButton.addEventListener('click', function (event) {
+        event.stopPropagation(); // Previne que o clique no menu feche o dropdown imediatamente
+        dropdownMenu.classList.toggle('show'); // Alterna a classe que mostra ou oculta o menu
+    });
+    
+    // Fecha o dropdown se o usuário clicar em qualquer lugar fora do dropdown
+    document.addEventListener('click', function (event) {
+        if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.remove('show'); // Fecha o menu se o clique for fora do dropdown
+        }
+    });
 });

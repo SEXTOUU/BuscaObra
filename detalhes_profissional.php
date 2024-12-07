@@ -99,24 +99,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="card">
             <div class="card-body">
                 <!-- Exibe a imagem do profissional ou a imagem padrão -->
-                <?php if (!empty($profissional['imagem'])): ?>
-                    <?php
-                    // Definindo o caminho correto para a imagem, assumindo que as imagens estão armazenadas na pasta "img/"
-                    $imagemPath = 'img/' . $profissional['imagem']; 
+                <?php
+                if (!empty($profissional['imagem'])):
+                    // Defina o caminho correto para a imagem pública
+                    $imagemPath = '/img/' . basename($profissional['imagem']); // Caminho relativo à raiz do servidor web
 
-                    // Verifica se o arquivo da imagem realmente existe
-                    if (file_exists($imagemPath)) {
-                        // Se a imagem existir, exibe a imagem
-                        echo '<img src="' . htmlspecialchars($imagemPath) . '" class="card-img-top mb-3 img-profissional" alt="Imagem de ' . htmlspecialchars($profissional['pro_nome']) . '">';
-                    } else {
-                        // Se a imagem não existir, exibe a imagem padrão
-                        echo '<img src="images/userphoto/default-avatar.png" class="card-img-top mb-3 img-profissional" alt="Imagem de ' . htmlspecialchars($profissional['pro_nome']) . '">';
-                    }
-                    ?>
+                    // Verifica se o arquivo da imagem realmente existe no diretório
+                    if (file_exists($_SERVER['DOCUMENT_ROOT'] . $imagemPath)): ?>
+                        <img src="<?php echo htmlspecialchars($imagemPath); ?>" class="card-img-top mb-3 img-profissional" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
+                    <?php else: ?>
+                        <!-- Exibe a imagem padrão caso o arquivo não seja encontrado -->
+                        <img src="images/userphoto/default-avatar.png" class="card-img-top mb-3 img-profissional" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
+                    <?php endif; ?>
                 <?php else: ?>
                     <!-- Caso não tenha imagem no banco de dados, exibe a imagem padrão -->
                     <img src="images/userphoto/default-avatar.png" class="card-img-top mb-3 img-profissional" alt="Imagem de <?php echo htmlspecialchars($profissional['pro_nome']); ?>">
                 <?php endif; ?>
+
                 
                 <h5 class="card-title"><?php echo htmlspecialchars($profissional['pro_nome']); ?></h5>
                 <p><strong>Profissão:</strong> <?php echo htmlspecialchars($profissional['pro_profissao']); ?></p>
